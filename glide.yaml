@@ -1,0 +1,10 @@
+package: sku
+import:
+- package: github.com/leesper/tao
+  version: ^1.5.5
+- package: github.com/leesper/holmes
+testImport:
+- package: github.com/smartystreets/goconvey
+  version: ~1.6.2
+  subpackages:
+  - convey
