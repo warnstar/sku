@@ -9,7 +9,6 @@ import (
 
 	"github.com/leesper/holmes"
 	"github.com/leesper/tao"
-
 	"sku/tcpServer"
 )
 
@@ -24,9 +23,8 @@ func NewEchoServer() *EchoServer {
 		holmes.Infoln("on connect")
 
 		echo := tcpServer.Message{
-			Content: "hello, world",
+			Content: "server call ",
 		}
-
 		conn.Write(echo)
 		return true
 	})

@@ -1,0 +1,43 @@
+version: '2'
+services:
+    #go:
+    #    build: ./docker/golang
+    #    volumes:
+    #        - ./:/go/src/pulse
+    #        - ~/.ssh:/root/.ssh
+    #    restart: always
+#    super:
+#          build: ./docker/supervisor
+#          volumes:
+#              - ./:/var/www/html
+#              - ~/.ssh:/root/.ssh
+#              - ./docker/supervisor/conf/init_pre.conf:/etc/supervisor/conf.d/init_pre.conf
+#              - ./docker/supervisor/conf/init.conf:/etc/supervisor/conf.d/init.conf
+#              - ./docker/supervisor/conf/go-develop.conf:/etc/supervisor/conf.d/go-develop.conf
+#          links:
+#              - db
+#              - redis:redisdb
+#          ports:
+#              - "910:910"
+#    db:
+#        image: hub.c.163.com/library/mysql:5.6
+#        expose:
+#            - "3306"
+#        ports:
+#            - "3311:3306"
+#        environment:
+#            MYSQL_ROOT_PASSWORD: root
+#            MYSQL_DATABASE: web
+#            MYSQL_USER: web
+#            MYSQL_PASSWORD: web
+#            DEFAULT_CHARSET : utf8
+#            DEFAULT_COLLETION : utf8_bin
+#        volumes:
+#            - ./docker/mysql:/var/lib/mysql
+#        restart: always
+#    redis:
+#        image: 'hub.c.163.com/library/redis:3.2'
+#        environment:
+#          DB_PORT_6379_TCP_ADDR: 0.0.0.0
+#        expose:
+#            - "6379"

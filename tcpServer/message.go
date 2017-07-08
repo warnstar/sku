@@ -5,6 +5,7 @@ import (
 
 	"github.com/leesper/holmes"
 	"github.com/leesper/tao"
+	"fmt"
 )
 
 // Message defines the echo message.
@@ -14,7 +15,6 @@ type Message struct {
 
 // Serialize serializes Message into bytes.
 func (em Message) Serialize() ([]byte, error) {
-
 	return []byte(em.Content), nil
 }
 
@@ -25,6 +25,7 @@ func (em Message) MessageNumber() int32 {
 
 // DeserializeMessage deserializes bytes into Message.
 func DeserializeMessage(data []byte) (message tao.Message, err error) {
+
 	if data == nil {
 		return nil, tao.ErrNilData
 	}
@@ -37,7 +38,7 @@ func DeserializeMessage(data []byte) (message tao.Message, err error) {
 
 // ProcessMessage process the logic of echo message.
 func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
-
+	fmt.Printf("%v\n","22222222222222222")
 	msg := tao.MessageFromContext(ctx).(Message)
 	holmes.Infof("receving message %s\n", msg.Content)
 	conn.Write(msg)

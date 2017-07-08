@@ -1,0 +1,12 @@
+hash: e8c378904a6211dbb697d7d7d5408539bf7d6d3e644b4339d1f0ed9f7ef1c68e
+updated: 2017-07-08T16:25:22.9208459+08:00
+imports:
+- name: github.com/leesper/holmes
+  version: 094aa44caf1225f0209344f508a8aacdba48f4b9
+- name: github.com/leesper/tao
+  version: c8f71af537afb4d4b1157db05add1b8722204240
+testImports:
+- name: github.com/smartystreets/goconvey
+  version: ""
+  subpackages:
+  - convey
