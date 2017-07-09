@@ -10,6 +10,7 @@ import (
 	"github.com/leesper/holmes"
 	"github.com/leesper/tao"
 	"sku/tcpServer"
+	"sku/messages/demoMessage"
 )
 
 // EchoServer represents the echo server.
@@ -41,8 +42,10 @@ func NewEchoServer() *EchoServer {
 		holmes.Infoln("receving message")
 	})
 
+	codec := tao.CustomCodecOption(tcpServer.StringValue{})
+
 	return &EchoServer{
-		tao.NewServer(onConnect, onClose, onError, onMessage),
+		tao.NewServer(codec, onConnect, onClose, onError, onMessage),
 	}
 }
 
@@ -51,7 +54,7 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	tao.Register(tcpServer.Message{}.MessageNumber(), tcpServer.DeserializeMessage, tcpServer.ProcessMessage)
+	tao.Register(demoMessage.Message{}.MessageNumber(), demoMessage.DeserializeMessage, demoMessage.ProcessMessage)
 
 	l, err := net.Listen("tcp", ":12345")
 	if err != nil {

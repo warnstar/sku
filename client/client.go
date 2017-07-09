@@ -20,8 +20,9 @@ func main() {
 
 	go onMessageRecived(conn)
 
-	//b := []byte("1111111111111111111111111111111\n")
-	//conn.Write(b)
+	b := []byte("123456789\n")
+	fmt.Println(len(b))
+	conn.Write(b)
 
 	<-quitSemaphore
 }
