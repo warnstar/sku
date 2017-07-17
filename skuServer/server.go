@@ -8,15 +8,17 @@ import (
 	"syscall"
 	"runtime"
 	"os"
+	_ "sku/messages"
 )
 
-// EchoServer represents the echo server.
-type EchoServer struct {
+// SkuServer represents the Sku server.
+type SkuServer struct {
 	*tao.Server
 }
 
-// NewEchoServer returns an EchoServer.
-func NewEchoServer() *EchoServer {
+
+// NewSkuServer returns an SkuServer.
+func NewSkuServer() *SkuServer {
 	onConnect := tao.OnConnectOption(func(conn tao.WriteCloser) bool {
 		holmes.Infoln("on connect")
 		return true
@@ -36,7 +38,7 @@ func NewEchoServer() *EchoServer {
 
 	codec := tao.CustomCodecOption(StringValue{})
 
-	return &EchoServer{
+	return &SkuServer{
 		tao.NewServer(codec, onConnect, onClose, onError, onMessage),
 	}
 }
@@ -50,14 +52,14 @@ func Run() {
 	if err != nil {
 		holmes.Fatalf("listen error %v", err)
 	}
-	echoServer := NewEchoServer()
+	skuServer := NewSkuServer()
 
 	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 		<-c
-		echoServer.Stop()
+		skuServer.Stop()
 	}()
 
-	echoServer.Start(l)
+	skuServer.Start(l)
 }

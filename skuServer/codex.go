@@ -72,6 +72,7 @@ func (codec StringValue) Decode(raw net.Conn) (tao.Message, error) {
 
 		// deserialize message from bytes
 		unmarshaler := tao.GetUnmarshalFunc(msgType)
+
 		if unmarshaler == nil {
 			return nil, tao.ErrUndefined(msgType)
 		}
@@ -90,5 +91,6 @@ func (codec StringValue) Encode(msg tao.Message) ([]byte, error) {
 	binary.Write(buf, binary.LittleEndian, int32(len(data)))
 	buf.Write(data)
 	packet := buf.Bytes()
+
 	return packet, nil
 }
