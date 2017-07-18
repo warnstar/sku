@@ -1,4 +1,4 @@
-package skuServer
+package SkuServer
 
 import (
 	"net"

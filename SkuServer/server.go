@@ -1,4 +1,4 @@
-package skuServer
+package SkuServer
 
 import (
 	"github.com/leesper/tao"
@@ -6,9 +6,10 @@ import (
 	"net"
 	"os/signal"
 	"syscall"
-	"runtime"
 	"os"
-	_ "sku/messages"
+	_ "sku/SkuServer/TcpMessages"
+	"fmt"
+	"sku/base/config"
 )
 
 // SkuServer represents the Sku server.
@@ -44,11 +45,8 @@ func NewSkuServer() *SkuServer {
 }
 
 func Run() {
-	defer holmes.Start().Stop()
-	runtime.GOMAXPROCS(runtime.NumCPU())
-
-
-	l, err := net.Listen("tcp", ":12345")
+	addr := fmt.Sprintf(":%s", config.Ini.String("tcp.port"))
+	l, err := net.Listen("tcp", addr)
 	if err != nil {
 		holmes.Fatalf("listen error %v", err)
 	}
