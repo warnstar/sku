@@ -26,12 +26,17 @@ var ServerChan = make(chan *Server, 1)
 func SendToClient(msg interface{}) {
 	wsServer := <-ServerChan
 	ServerChan <- wsServer
-	
-	msgInfo, err := json.Marshal(msg)
-	if err != nil {
-		holmes.Errorln("发送至浏览器客户端失败")
+
+	if wsServer.ClientWs != nil {
+		msgInfo, err := json.Marshal(msg)
+		if err != nil {
+			holmes.Errorln("发送至浏览器客户端失败")
+		}
+		wsServer.ClientWs.Write(msgInfo)
+
+	} else {
+		holmes.Infof("浏览器客户端未连接")
 	}
-	wsServer.ClientWs.Write(msgInfo)
 
 
 }

@@ -12,6 +12,7 @@ import (
 	"sku/SkuServer/TcpMessages/ClientTimeSync"
 	"sku/Channel/ChanWebTcp"
 	"sku/WebServer/WebKey"
+	"fmt"
 )
 
 // Message defines the echo message.
@@ -74,11 +75,16 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	timeSyncMsg.Content = time.Now().Unix()
 	conn.Write(timeSyncMsg)
 
+	//通知浏览器--客户端已连接
+	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_CLIENT,fmt.Sprintf("%v已连接", onePi.Info.Name))
 
 	if server.CheckPiAllConnected() {
 		holmes.Infoln("全部客户端已连接")
 
 		ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER,"全部客户端已经连接")
+
+		//通知用户
+		ChanWebTcp.SendWeb(WebKey.WEB_CLIENT_CONNECT_COMPLETE, "")
 	}
 
 

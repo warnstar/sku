@@ -20,8 +20,11 @@ const WEB_TSI_TEST_MODULE_RESULT = "web_tsi_test_module_result";
 
 
 const LOG_TYPE_SERVER = "服务器";
-const LOG_TYPE_CLIENT = "终端设备";
-const LOG_TYPE_TSI = "TSI服务器";
+const LOG_TYPE_CLIENT = "派";
+const LOG_TYPE_TSI = "TSI";
 
+const SUCCESS = "true";
+const FAIL = "false";
+const START = "start";
 
 

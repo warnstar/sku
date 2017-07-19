@@ -9,6 +9,7 @@ import (
 	"sku/SkuServer/SkuRun"
 	"sku/Channel/ChanWebTcp"
 	"sku/WebServer/WebKey"
+	"fmt"
 )
 
 // Message defines the echo message.
@@ -59,10 +60,16 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 
 	thisPi.IsTimeSync = true
 	server.UpdatePiByConnId(connId, thisPi)
+
+	//通知浏览器-客户端已经时间同步
+	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_CLIENT,fmt.Sprintf("%v已时间同步", thisPi.Info.Name))
+
 	if server.CheckPiAllTimeSync() {
 		holmes.Infoln("全部已经时间同步")
-
 		ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER,"全部客户端已经时间同步")
+
+		//通知用户
+		ChanWebTcp.SendWeb(WebKey.WEB_CLIENT_TIME_SYNC_COMPLETE, "")
 	}
 
 	SkuRun.PiServer <- server

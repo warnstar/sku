@@ -48,7 +48,7 @@ func Run() {
 	addr := fmt.Sprintf(":%s", config.Ini.String("tcp.port"))
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
-		holmes.Fatalf("listen error %v", err)
+		holmes.Fatalf("listen error %v %v", err, addr)
 	}
 	skuServer := NewSkuServer()
 

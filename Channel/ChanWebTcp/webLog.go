@@ -1,8 +1,8 @@
 package ChanWebTcp
 
 import (
-	"time"
 	"fmt"
+	"time"
 	"sku/WebServer/WebKey"
 )
 
@@ -11,6 +11,7 @@ type LogObj struct {
 	LogType string `json:"type"`
 	Content interface{} `json:"content"`
 }
+
 
 func SendWebLog(logType string, info interface{}) {
 	log := new(LogObj)

@@ -6,10 +6,6 @@ import (
 	"errors"
 )
 
-
-//全局服务器变量
-var PiServer = make(chan *Server, 1)
-
 type Server struct {
 	TsiServerAddress string
 	IsAllConnected bool
@@ -18,6 +14,9 @@ type Server struct {
 	PiMaxNum int
 	Pis [] SkuPi.Pi
 }
+
+// 共享变量 - 全局服务器变量
+var PiServer = make(chan *Server, 1)
 
 func init() {
 	s := Server{PiMaxNum:2,TsiServerAddress:"172.16.15.214"}

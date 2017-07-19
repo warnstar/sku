@@ -15,6 +15,7 @@ func main() {
 
 	go func(){
 		SkuServer.Run()
+		println("end tcp")
 		endRunning <- true
 	}()
 
