@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"github.com/leesper/holmes"
 	"golang.org/x/net/websocket"
-	"sku/Channel/ChanWebTcp"
 	"sku/SkuServer/Tsi"
 	"sku/WebServer/WebKey"
 	"sku/WebServer/WebMessages/WebUser"
+	"sku/Channel/ChanTcp"
 )
 
 type Message struct {
@@ -36,7 +36,6 @@ func Register(ws *websocket.Conn) {
 		switch message.Type {
 		case WebKey.WEB_USER:
 			WebUser.ProcessMessage(ws, message.Content)
-
 		case WebKey.WEB_TSI_CHECK:
 			//处理 tsi 检查
 			tsiChan := <-Tsi.TsiClientChan
@@ -56,19 +55,26 @@ func Register(ws *websocket.Conn) {
 			tsiChan.Type = Tsi.TSI_RUN_TYPE_TEST_PRE
 			Tsi.TsiClientChan <- tsiChan
 
-			holmes.Infof("tsi校验启动:%v\n", tsiChan.IsRunning)
+			holmes.Infof("tsi校准启动:%v\n", tsiChan.IsRunning)
 
 			//开启读取tsi数据
 			Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
 			Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
 		case WebKey.WEB_TSI_TEST:
+			//处理 tsi 校验
+			tsiChan := <-Tsi.TsiClientChan
+			tsiChan.Type = Tsi.TSI_RUN_TYPE_TEST
+			Tsi.TsiClientChan <- tsiChan
 
+			holmes.Infof("tsi测试启动:%v\n", tsiChan.IsRunning)
+
+			//开启读取tsi数据
+			Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
+			Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
 		case WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK:
-			ChanWebTcp.SendTcp(WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK, "")
-		case WebKey.WEB_CLIENT_TREE_DATA:
+			ChanTcp.SendTcp(WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK, "")
 		case WebKey.WEB_CLIENT_EXIT:
-		case WebKey.WEB_CAN_START_TSI_TEST:
-		case WebKey.WEB_TSI_TEST_MODULE_RESULT:
+			ChanTcp.SendTcp(WebKey.WEB_CLIENT_EXIT, "")
 		}
 	}
 }

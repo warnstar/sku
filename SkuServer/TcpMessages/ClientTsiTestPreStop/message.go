@@ -1,4 +1,4 @@
-package ClientTimeSync
+package ClientTsiTestPreStop
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 // Message defines the echo message.
 type Message struct {
 	Type    string `json:"type"`
-	Content int64  `json:"content"`
+	Content interface{}  `json:"content"`
 }
 
 // Serialize serializes Message into bytes.
@@ -26,12 +26,12 @@ func (em Message) Serialize() ([]byte, error) {
 
 // MessageNumber returns message type number.
 func (em Message) MessageNumber() int32 {
-	return 1002
+	return 1202
 }
 
 // MessageType returns message type .
 func (em Message) MessageType() string {
-	return "client_time_sync"
+	return "client_tsi_test_pre_stop"
 }
 
 // DeserializeMessage deserializes bytes into Message.
@@ -51,27 +51,22 @@ func DeserializeMessage(data []byte) (message tao.Message, err error) {
 func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	connId := tao.NetIDFromContext(ctx)
 
+	//取tcp服务器 变量
 	server := <-SkuRun.PiServer
+
 	thisPi, err := server.GetPiByConnId(connId)
 	if err != nil {
 		holmes.Errorln("client-time-sync: 当前链接对应的pi不存在")
 		return
 	}
 
-	thisPi.IsTimeSync = true
+	//设置客户端校准状态
+	thisPi.IsTsiPreStop = true
 	server.UpdatePiByConnId(connId, thisPi)
 
-	//通知浏览器-客户端已经时间同步
-	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已时间同步", thisPi.Info.Name))
-
-	if server.CheckPiAllTimeSync() {
-		holmes.Infoln("全部已经时间同步")
-
-		ChanWeb.SendWebLog(WebKey.LOG_TYPE_SERVER, "全部客户端已经时间同步")
-
-		//通知用户
-		ChanWeb.SendWeb(WebKey.WEB_CLIENT_TIME_SYNC_COMPLETE, "")
-	}
-
+	//设置tcp服务器 变量
 	SkuRun.PiServer <- server
+
+	//通知浏览器-客户端已经时间同步
+	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v确认已关闭TSI校准", thisPi.Info.Name))
 }

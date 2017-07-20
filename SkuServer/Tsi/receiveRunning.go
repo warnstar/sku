@@ -3,11 +3,12 @@ package Tsi
 import (
 	"bufio"
 	"net"
-	"sku/Channel/ChanWebTcp"
 	"sku/SkuServer/TcpMessages/TcpKey"
 	"sku/WebServer/WebKey"
 	"strconv"
 	"strings"
+	"sku/Channel/ChanWeb"
+	"sku/Channel/ChanTcp"
 )
 
 func recvRunning(conn net.Conn) {
@@ -49,7 +50,7 @@ func analysisTsi(pm25 int) {
 
 	if tsiChan.Type == TSI_RUN_TYPE_CHECK {
 		if pm25 > 0 {
-			ChanWebTcp.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.SUCCESS)
+			ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.SUCCESS)
 
 			// 关闭数据接收
 			ControlTsi(TSI_SERVER_STOP, "")
@@ -57,8 +58,8 @@ func analysisTsi(pm25 int) {
 	} else {
 
 		//发送当前tsi值到浏览器
-		ChanWebTcp.SendWeb(WebKey.WEB_TSI_NOW_DATA, pm25)
-		println(pm25)
+		ChanWeb.SendWeb(WebKey.WEB_TSI_NOW_DATA, pm25)
+
 		if tsiRunStatus.IsRunning {
 			if pm25 >= TSI_START_POINT {
 				// pm25 >= 500
@@ -72,15 +73,14 @@ func analysisTsi(pm25 int) {
 					tsiRunStatus.AtStartNum++
 					if tsiRunStatus.AtStartNum >= TSI_FLAG_TIMES {
 						//发送日志 到浏览器
-						ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_TSI, "开始收集数据任务")
+						ChanWeb.SendWebLog(WebKey.LOG_TYPE_TSI, "开始收集数据任务")
 
 						// 通知 服务器，开始数据收集任务
 						if tsiChan.Type == TSI_RUN_TYPE_TEST_PRE {
-							ChanWebTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_PRE_START, "")
+							ChanTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_PRE_START, "")
 						} else {
-							ChanWebTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_START, "")
+							ChanTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_START, "")
 						}
-
 					}
 				}
 			} else if pm25 > 0 {
@@ -91,13 +91,13 @@ func analysisTsi(pm25 int) {
 
 					// 通知 服务器，收集数据任务完成
 					if tsiChan.Type == TSI_RUN_TYPE_TEST_PRE {
-						ChanWebTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_PRE_STOP, "")
+						ChanTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_PRE_STOP, "")
 					} else {
-						ChanWebTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_STOP, "")
+						ChanTcp.SendTcp(TcpKey.TYPE_CLIENT_TSI_TEST_STOP, "")
 					}
 
 					//发送日志 到浏览器
-					ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_TSI, "处理完成, 关闭收集数据任务")
+					ChanWeb.SendWebLog(WebKey.LOG_TYPE_TSI, "处理完成, 关闭收集数据任务")
 
 				} else {
 					tsiRunStatus.AtStopNum++
@@ -112,7 +112,7 @@ func analysisTsi(pm25 int) {
 					tsiRunStatus.IsRunning = true
 
 					//发送日志 到浏览器
-					ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_TSI, "pm25已超过500，准备开始采集数据")
+					ChanWeb.SendWebLog(WebKey.LOG_TYPE_TSI, "pm25已超过500，准备开始采集数据")
 
 					//创建TSI文件
 				} else {

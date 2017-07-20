@@ -3,10 +3,11 @@ package WebUser
 import (
 	"github.com/leesper/holmes"
 	"golang.org/x/net/websocket"
-	"sku/Channel/ChanWebTcp"
 	"sku/WebServer/WebKey"
 	"sku/WebServer/WebRun"
 	"strconv"
+	"sku/Channel/ChanWeb"
+	"sku/Channel/ChanTcp"
 )
 
 type Message struct {
@@ -60,8 +61,8 @@ func ProcessMessage(ws *websocket.Conn, content interface{}) {
 	WebRun.ServerChan <- wsServer
 
 	//通知Tcp服务器
-	ChanWebTcp.SendTcp(msg.MessageType(), msg)
+	ChanTcp.SendTcp(msg.MessageType(), msg)
 
 	//通知浏览器
-	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER, "已连接服务器")
+	ChanWeb.SendWebLog(WebKey.LOG_TYPE_SERVER, "已连接服务器")
 }

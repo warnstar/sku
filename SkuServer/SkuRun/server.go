@@ -2,14 +2,16 @@ package SkuRun
 
 import (
 	"errors"
-	"fmt"
 	"sku/SkuServer/SkuPi"
+	"github.com/leesper/holmes"
 )
 
 type Server struct {
 	TsiServerAddress string
 	IsAllConnected   bool
 	IsAllTimeSync    bool
+	IsAllWriteKb	 bool
+	IsAllSendResult  bool
 	PiCurNum         int
 	PiMaxNum         int
 	Pis              []SkuPi.Pi
@@ -39,6 +41,9 @@ func (s *Server) AddPi(pi SkuPi.Pi) {
 	if isNew {
 		s.Pis = append(s.Pis, pi)
 		s.PiCurNum++
+		if s.PiCurNum >= s.PiMaxNum {
+			s.IsAllConnected = true
+		}
 	}
 }
 
@@ -63,31 +68,10 @@ func (s *Server) UpdatePiByConnId(connId int64, pi SkuPi.Pi) {
 	}
 }
 
-func (s *Server) CheckPiAllTimeSync() bool {
-	timeSyncNum := 0
-	for _, onePi := range s.Pis {
-		if onePi.IsTimeSync {
-			timeSyncNum++
-		}
-	}
-
-	if timeSyncNum >= s.PiMaxNum {
-		s.IsAllTimeSync = true
-
-		return true
-	}
-
-	return false
-}
-
-func (s *Server) CheckPiAllConnected() bool {
-	return s.PiCurNum >= s.PiMaxNum
-}
 
 func (s *Server) PrintInfo() {
-	fmt.Printf("总链接的Pi数量：%d\n", len(s.Pis))
-
+	holmes.Infof("总链接的Pi数量：%d\n", len(s.Pis))
 	for _, onePi := range s.Pis {
-		fmt.Printf("%v \n", onePi.Info)
+		holmes.Infof("%v \n", onePi.Info)
 	}
 }

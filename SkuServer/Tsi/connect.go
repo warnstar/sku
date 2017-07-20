@@ -2,8 +2,9 @@ package Tsi
 
 import (
 	"net"
-	"sku/Channel/ChanWebTcp"
 	"sku/WebServer/WebKey"
+	"github.com/leesper/holmes"
+	"sku/Channel/ChanWeb"
 )
 
 type Message struct {
@@ -39,19 +40,20 @@ func init() {
 
 func ControlTsi(msgType string, msgContent string) {
 	msg := Message{msgType, msgContent}
+
 	ToSendChan <- &msg
 }
 
 func Connect() {
 	addr, err := net.ResolveTCPAddr("tcp", "172.16.15.214:3602")
 	if err != nil {
-		println(err.Error())
-		ChanWebTcp.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
+		holmes.Errorln(err.Error())
+		ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
 	}
 	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
-		println(err.Error())
-		ChanWebTcp.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
+		holmes.Errorln(err.Error())
+		ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
 	}
 
 	tsiConn := <-TsiClientChan

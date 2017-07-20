@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"github.com/leesper/holmes"
 	"github.com/leesper/tao"
-	"sku/Channel/ChanWebTcp"
 	"sku/SkuServer/SkuPi"
 	"sku/SkuServer/SkuRun"
 	"sku/SkuServer/TcpMessages/ClientTimeSync"
 	"sku/WebServer/WebKey"
 	"time"
+	"sku/Channel/ChanWeb"
 )
 
 // Message defines the echo message.
@@ -60,6 +60,7 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	//pi信息
 	onePi := new(SkuPi.Pi)
 	onePi.ConnId = tao.NetIDFromContext(ctx)
+	onePi.ConnWriter = &conn
 	onePi.Info = new(SkuPi.Info)
 	onePi.Info.Name = msg.Content.Name
 	onePi.Info.ConnectNow = msg.Content.ConnectNow
@@ -76,15 +77,15 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	conn.Write(timeSyncMsg)
 
 	//通知浏览器--客户端已连接
-	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已连接", onePi.Info.Name))
+	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已连接", onePi.Info.Name))
 
 	if server.CheckPiAllConnected() {
 		holmes.Infoln("全部客户端已连接")
 
-		ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER, "全部客户端已经连接")
+		ChanWeb.SendWebLog(WebKey.LOG_TYPE_SERVER, "全部客户端已经连接")
 
 		//通知用户
-		ChanWebTcp.SendWeb(WebKey.WEB_CLIENT_CONNECT_COMPLETE, "")
+		ChanWeb.SendWeb(WebKey.WEB_CLIENT_CONNECT_COMPLETE, "")
 	}
 
 	SkuRun.PiServer <- server

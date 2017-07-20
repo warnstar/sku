@@ -1,4 +1,4 @@
-package ChanWebTcp
+package ChanWeb
 
 import (
 	"fmt"
