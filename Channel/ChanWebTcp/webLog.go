@@ -2,21 +2,20 @@ package ChanWebTcp
 
 import (
 	"fmt"
-	"time"
 	"sku/WebServer/WebKey"
+	"time"
 )
 
 type LogObj struct {
-	AtTime string `json:"time"`
-	LogType string `json:"type"`
+	AtTime  string      `json:"time"`
+	LogType string      `json:"type"`
 	Content interface{} `json:"content"`
 }
-
 
 func SendWebLog(logType string, info interface{}) {
 	log := new(LogObj)
 
-	log.AtTime = fmt.Sprintf("%d:%d:%d",time.Now().Hour(),time.Now().Minute(), time.Now().Second())
+	log.AtTime = fmt.Sprintf("%d:%d:%d", time.Now().Hour(), time.Now().Minute(), time.Now().Second())
 	log.LogType = logType
 	log.Content = info
 

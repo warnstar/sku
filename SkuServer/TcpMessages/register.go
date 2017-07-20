@@ -9,8 +9,8 @@ import (
 func init() {
 
 	/**
-		========== 与 pi 交互===========
-	 */
+	========== 与 pi 交互===========
+	*/
 	//上报pi信息
 	tao.Register(ClientInfo.Message{}.MessageNumber(), ClientInfo.DeserializeMessage, ClientInfo.ProcessMessage)
 

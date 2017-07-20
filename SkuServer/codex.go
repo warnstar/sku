@@ -1,12 +1,12 @@
 package SkuServer
 
 import (
-	"net"
+	"bytes"
+	"encoding/binary"
+	"github.com/leesper/holmes"
 	"github.com/leesper/tao"
 	"io"
-	"github.com/leesper/holmes"
-	"encoding/binary"
-	"bytes"
+	"net"
 )
 
 // TypeLengthValueCodec defines a special codec.

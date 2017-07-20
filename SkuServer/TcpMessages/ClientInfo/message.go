@@ -3,30 +3,30 @@ package ClientInfo
 import (
 	"context"
 
-	"github.com/leesper/tao"
 	"encoding/json"
+	"fmt"
 	"github.com/leesper/holmes"
-	"time"
+	"github.com/leesper/tao"
+	"sku/Channel/ChanWebTcp"
 	"sku/SkuServer/SkuPi"
 	"sku/SkuServer/SkuRun"
 	"sku/SkuServer/TcpMessages/ClientTimeSync"
-	"sku/Channel/ChanWebTcp"
 	"sku/WebServer/WebKey"
-	"fmt"
+	"time"
 )
 
 // Message defines the echo message.
 type Message struct {
-	Type string `json:"type"`
-	Content struct{
-		Name string
+	Type    string `json:"type"`
+	Content struct {
+		Name       string
 		ConnectNow int
 	} `json:"content"`
 }
 
 // Serialize serializes Message into bytes.
 func (em Message) Serialize() ([]byte, error) {
-	msg, err:= json.Marshal(em)
+	msg, err := json.Marshal(em)
 	return msg, err
 }
 
@@ -76,18 +76,16 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	conn.Write(timeSyncMsg)
 
 	//通知浏览器--客户端已连接
-	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_CLIENT,fmt.Sprintf("%v已连接", onePi.Info.Name))
+	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已连接", onePi.Info.Name))
 
 	if server.CheckPiAllConnected() {
 		holmes.Infoln("全部客户端已连接")
 
-		ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER,"全部客户端已经连接")
+		ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER, "全部客户端已经连接")
 
 		//通知用户
 		ChanWebTcp.SendWeb(WebKey.WEB_CLIENT_CONNECT_COMPLETE, "")
 	}
 
-
 	SkuRun.PiServer <- server
 }
-

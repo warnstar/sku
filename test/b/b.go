@@ -1,8 +1,8 @@
 package b
 
 import (
-	"sku/test/a"
 	"fmt"
+	"sku/test/a"
 )
 
 func init() {

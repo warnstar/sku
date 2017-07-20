@@ -1,41 +1,36 @@
 package ChanWebTcp
 
 import (
+	"sku/SkuServer/SkuRun"
 	"sku/WebServer/WebKey"
 	"sku/WebServer/WebRun"
-	"sku/SkuServer/SkuRun"
 )
 
 type Message struct {
-	Type string `json:"type"`
+	Type    string      `json:"type"`
 	Content interface{} `json:"content"`
 }
 
 var ToWebChan = make(chan *Message)
 var ToTcpChan = make(chan *Message)
 
-
 func SendTcp(msgType string, msgContent interface{}) {
-	msg := Message{Type:msgType,Content:msgContent}
+	msg := Message{Type: msgType, Content: msgContent}
 
 	ToTcpChan <- &msg
 }
 
-
 func SendWeb(msgType string, msgContent interface{}) {
-	msg := Message{Type:msgType,Content:msgContent}
+	msg := Message{Type: msgType, Content: msgContent}
 
 	ToWebChan <- &msg
 }
 
-
-
-
 func init() {
-	go func(){
+	go func() {
 		for {
-			msg := <- ToWebChan
-			
+			msg := <-ToWebChan
+
 			//fmt.Printf("websocket channel 消息接收：%v\n", *msg)
 			switch msg.Type {
 			case WebKey.WEB_CLIENT_LOG:
@@ -53,9 +48,9 @@ func init() {
 		}
 	}()
 
-	go func(){
+	go func() {
 		for {
-			msg := <- ToTcpChan
+			msg := <-ToTcpChan
 			//fmt.Printf("tcpServer channel 消息接收：%v\n", *msg)
 
 			switch msg.Type {
@@ -70,13 +65,13 @@ func init() {
 				SkuRun.PiServer <- server
 			case WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK:
 				tcpServer := <-SkuRun.PiServer
-				SkuRun.PiServer <-tcpServer
+				SkuRun.PiServer <- tcpServer
 
 				if tcpServer.IsAllConnected {
-					SendWeb(WebKey.WEB_CLIENT_CONNECT_COMPLETE,"")
+					SendWeb(WebKey.WEB_CLIENT_CONNECT_COMPLETE, "")
 
 					if tcpServer.IsAllTimeSync {
-						SendWeb(WebKey.WEB_CLIENT_TIME_SYNC_COMPLETE,"")
+						SendWeb(WebKey.WEB_CLIENT_TIME_SYNC_COMPLETE, "")
 					}
 				}
 			}

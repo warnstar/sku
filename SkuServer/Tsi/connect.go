@@ -2,19 +2,19 @@ package Tsi
 
 import (
 	"net"
-	"sku/WebServer/WebKey"
 	"sku/Channel/ChanWebTcp"
+	"sku/WebServer/WebKey"
 )
 
 type Message struct {
-	Type string
+	Type    string
 	Content string
 }
 
 type TsiConnect struct {
-	Conn *net.TCPConn
+	Conn      *net.TCPConn
 	IsRunning bool
-	Type string
+	Type      string
 }
 
 // 共享变量 - tsi 链接对象
@@ -28,7 +28,7 @@ var TsiRunningStatusChan = make(chan *TsiRunningStatus, 1)
 
 func resetChan() {
 	//重置 共享变量 - tsi数据接收处理时的暂存变量
-	<- TsiRunningStatusChan
+	<-TsiRunningStatusChan
 	TsiRunningStatusChan <- new(TsiRunningStatus)
 }
 
@@ -38,20 +38,20 @@ func init() {
 }
 
 func ControlTsi(msgType string, msgContent string) {
-	msg := Message{msgType,msgContent}
+	msg := Message{msgType, msgContent}
 	ToSendChan <- &msg
 }
 
 func Connect() {
 	addr, err := net.ResolveTCPAddr("tcp", "172.16.15.214:3602")
-	if err !=nil {
+	if err != nil {
 		println(err.Error())
-		ChanWebTcp.SendWeb(WebKey.WEB_TSI_CHECK,WebKey.FAIL)
+		ChanWebTcp.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
 	}
 	conn, err := net.DialTCP("tcp", nil, addr)
-	if err !=nil {
+	if err != nil {
 		println(err.Error())
-		ChanWebTcp.SendWeb(WebKey.WEB_TSI_CHECK,WebKey.FAIL)
+		ChanWebTcp.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
 	}
 
 	tsiConn := <-TsiClientChan

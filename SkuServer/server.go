@@ -1,22 +1,21 @@
 package SkuServer
 
 import (
-	"github.com/leesper/tao"
-	"github.com/leesper/holmes"
-	"net"
-	"os/signal"
-	"syscall"
-	"os"
-	_ "sku/SkuServer/TcpMessages"
 	"fmt"
+	"github.com/leesper/holmes"
+	"github.com/leesper/tao"
+	"net"
+	"os"
+	"os/signal"
+	_ "sku/SkuServer/TcpMessages"
 	"sku/base/config"
+	"syscall"
 )
 
 // SkuServer represents the Sku server.
 type SkuServer struct {
 	*tao.Server
 }
-
 
 // NewSkuServer returns an SkuServer.
 func NewSkuServer() *SkuServer {

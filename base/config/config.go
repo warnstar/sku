@@ -10,7 +10,6 @@ type Path struct {
 	RootPath string
 }
 
-
 var (
 	Ini config.Configer
 )

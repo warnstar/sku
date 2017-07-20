@@ -3,24 +3,24 @@ package ClientTimeSync
 import (
 	"context"
 
-	"github.com/leesper/tao"
 	"encoding/json"
-	"github.com/leesper/holmes"
-	"sku/SkuServer/SkuRun"
-	"sku/Channel/ChanWebTcp"
-	"sku/WebServer/WebKey"
 	"fmt"
+	"github.com/leesper/holmes"
+	"github.com/leesper/tao"
+	"sku/Channel/ChanWebTcp"
+	"sku/SkuServer/SkuRun"
+	"sku/WebServer/WebKey"
 )
 
 // Message defines the echo message.
 type Message struct {
-	Type string `json:"type"`
-	Content int64 `json:"content"`
+	Type    string `json:"type"`
+	Content int64  `json:"content"`
 }
 
 // Serialize serializes Message into bytes.
 func (em Message) Serialize() ([]byte, error) {
-	msg, err:= json.Marshal(em)
+	msg, err := json.Marshal(em)
 	return msg, err
 }
 
@@ -52,7 +52,7 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	connId := tao.NetIDFromContext(ctx)
 
 	server := <-SkuRun.PiServer
-	thisPi,err := server.GetPiByConnId(connId)
+	thisPi, err := server.GetPiByConnId(connId)
 	if err != nil {
 		holmes.Errorln("client-time-sync: 当前链接对应的pi不存在")
 		return
@@ -62,11 +62,11 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	server.UpdatePiByConnId(connId, thisPi)
 
 	//通知浏览器-客户端已经时间同步
-	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_CLIENT,fmt.Sprintf("%v已时间同步", thisPi.Info.Name))
+	ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已时间同步", thisPi.Info.Name))
 
 	if server.CheckPiAllTimeSync() {
 		holmes.Infoln("全部已经时间同步")
-		ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER,"全部客户端已经时间同步")
+		ChanWebTcp.SendWebLog(WebKey.LOG_TYPE_SERVER, "全部客户端已经时间同步")
 
 		//通知用户
 		ChanWebTcp.SendWeb(WebKey.WEB_CLIENT_TIME_SYNC_COMPLETE, "")
@@ -74,4 +74,3 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 
 	SkuRun.PiServer <- server
 }
-

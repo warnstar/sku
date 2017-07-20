@@ -1,23 +1,23 @@
 package Tsi
 
 import (
-	"time"
-	"net"
 	"github.com/leesper/holmes"
+	"net"
+	"time"
 )
 
-func sendRunning(conn net.Conn){
-	go func(){
+func sendRunning(conn net.Conn) {
+	go func() {
 		isContinue := true
 		isReceiveDataContinue := true
 
 		for {
 			if isContinue {
-				sendMsg := <- ToSendChan
+				sendMsg := <-ToSendChan
 
 				switch sendMsg.Type {
 				case TSI_SERVER_EXIT:
-					_,err :=conn.Write([]byte(TSI_STOP))
+					_, err := conn.Write([]byte(TSI_STOP))
 					println("关闭TSI连接")
 					if err != nil {
 						println(err.Error())
@@ -26,7 +26,7 @@ func sendRunning(conn net.Conn){
 						conn.Close()
 					}
 
-					tsiConn := <- TsiClientChan
+					tsiConn := <-TsiClientChan
 					tsiConn.IsRunning = false
 					tsiConn.Conn = nil
 					TsiClientChan <- tsiConn
@@ -36,7 +36,7 @@ func sendRunning(conn net.Conn){
 					//重置运行时状态变量
 					resetChan()
 
-					_,err :=conn.Write([]byte(TSI_START))
+					_, err := conn.Write([]byte(TSI_START))
 					if err != nil {
 						holmes.Errorln(err.Error())
 					} else {
@@ -44,29 +44,29 @@ func sendRunning(conn net.Conn){
 					}
 				case TSI_SERVER_STOP:
 					//关闭数据接收
-					ControlTsi(TSI_SERVER_RECEIVE_DATA_STOP,"")
+					ControlTsi(TSI_SERVER_RECEIVE_DATA_STOP, "")
 
-					_,err :=conn.Write([]byte(TSI_STOP))
+					_, err := conn.Write([]byte(TSI_STOP))
 					if err != nil {
 						println(err.Error())
 						//关闭连接
-						ControlTsi(TSI_SERVER_EXIT,"")
+						ControlTsi(TSI_SERVER_EXIT, "")
 					} else {
 						holmes.Infoln("关闭TSI成功")
 					}
 				case TSI_SERVER_RECEIVE_DATA_START:
 					//开启请求接收tsi数据线程
-					go func(){
+					go func() {
 						isReceiveDataContinue = true
 						holmes.Infoln("启动TSI数据接收线程")
 						for {
 							if isReceiveDataContinue {
 								//每隔1s发送一次请求命令
-								_,err :=conn.Write([]byte(TSI_RECEIVE))
+								_, err := conn.Write([]byte(TSI_RECEIVE))
 								if err != nil {
 									println(err.Error())
 									//关闭连接
-									ControlTsi(TSI_SERVER_EXIT,"")
+									ControlTsi(TSI_SERVER_EXIT, "")
 								}
 								time.Sleep(time.Second)
 							}

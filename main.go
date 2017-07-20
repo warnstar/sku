@@ -1,10 +1,10 @@
 package main
 
 import (
-	"sku/SkuServer"
-	"sku/WebServer"
 	"github.com/leesper/holmes"
 	"runtime"
+	"sku/SkuServer"
+	"sku/WebServer"
 )
 
 func main() {
@@ -13,13 +13,13 @@ func main() {
 
 	var endRunning = make(chan bool, 1)
 
-	go func(){
+	go func() {
 		SkuServer.Run()
 		println("end tcp")
 		endRunning <- true
 	}()
 
-	go func(){
+	go func() {
 		WebServer.Run()
 		endRunning <- true
 	}()
