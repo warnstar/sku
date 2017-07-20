@@ -1,4 +1,4 @@
-package ClientTsiTestStop
+package ClientGetFile
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"sku/SkuServer/SkuRun"
 	"sku/WebServer/WebKey"
 	"sku/Channel/ChanWeb"
+	"sku/SkuServer/Tsi"
 )
 
 // Message defines the echo message.
@@ -26,12 +27,12 @@ func (em Message) Serialize() ([]byte, error) {
 
 // MessageNumber returns message type number.
 func (em Message) MessageNumber() int32 {
-	return 1206
+	return 1102
 }
 
 // MessageType returns message type .
 func (em Message) MessageType() string {
-	return "client_tsi_test_stop"
+	return "client_get_file"
 }
 
 // DeserializeMessage deserializes bytes into Message.
@@ -53,6 +54,7 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 
 	//取tcp服务器 变量
 	server := <-SkuRun.PiServer
+	SkuRun.PiServer <- server
 
 	thisPi, err := server.GetPiByConnId(connId)
 	if err != nil {
@@ -60,13 +62,23 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 		return
 	}
 
-	//设置客户端测试状态
-	thisPi.IsTsiTestStop = true
-	server.UpdatePiByConnId(connId, thisPi)
+	msg := tao.MessageFromContext(ctx).(Message)
+	fileName := msg.Content.(string)
 
-	//设置tcp服务器 变量
-	SkuRun.PiServer <- server
+	msg.Content, err = Tsi.GetFileInfo(fileName)
 
-	//通知浏览器-客户端已经停止采集tsi数据
-	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v确认已关闭TSI测试", thisPi.Info.Name))
+	if err != nil {
+		holmes.Errorf("获取文件信息错误：%v(%v)\n",err.Error(), fileName)
+		return
+	}
+
+	//将文件发送至pi
+	err = conn.Write(msg)
+
+	if err != nil {
+		holmes.Errorf("发送文件消息失败：%v\n",err.Error())
+	}
+
+	//通知浏览器-pi已经获取文件
+	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已获取文件", thisPi.Info.Name))
 }

@@ -42,6 +42,10 @@ func init() {
 					WebRun.SendToClient(msg)
 				case WebKey.WEB_CAN_START_TSI_TEST:
 					WebRun.SendToClient(msg)
+				case WebKey.WEB_TSI_TEST_PRE:
+					WebRun.SendToClient(msg)
+				case WebKey.WEB_TSI_TEST:
+					WebRun.SendToClient(msg)
 				}
 			}()
 		}

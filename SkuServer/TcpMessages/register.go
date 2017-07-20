@@ -11,6 +11,7 @@ import (
 	"sku/SkuServer/TcpMessages/ClientTsiTestModuleResult"
 	"sku/SkuServer/TcpMessages/ClientModuleDac"
 	"sku/SkuServer/TcpMessages/ClientWriteKbFinish"
+	"sku/SkuServer/TcpMessages/ClientGetFile"
 )
 
 func init() {
@@ -44,5 +45,8 @@ func init() {
 
 	//客户端上报Tsi测试分析结果
 	tao.Register(ClientTsiTestModuleResult.Message{}.MessageNumber(), ClientTsiTestModuleResult.DeserializeMessage, ClientTsiTestModuleResult.ProcessMessage)
+
+	//客户端获取文件
+	tao.Register(ClientGetFile.Message{}.MessageNumber(), ClientGetFile.DeserializeMessage, ClientGetFile.ProcessMessage)
 
 }

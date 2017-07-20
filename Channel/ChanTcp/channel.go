@@ -10,7 +10,6 @@ import (
 	"sku/SkuServer/TcpMessages/ClientTsiTestStart"
 	"sku/SkuServer/TcpMessages/ClientTsiTestStop"
 	"sku/SkuServer/TcpMessages/ClientTsiTestPreStop"
-	"sku/SkuServer/TcpMessages"
 )
 
 type Message struct {
@@ -63,7 +62,7 @@ func init() {
 					toPiMsg.Type = toPiMsg.MessageType()
 
 					//发送消息到所有pi
-					TcpMessages.SendToAllPi(toPiMsg)
+					SkuRun.SendToAllPi(toPiMsg)
 
 					ChanWeb.SendWebLog(WebKey.LOG_TYPE_SERVER,"通知客户端--启动TSI校准")
 				case TcpKey.TYPE_CLIENT_TSI_TEST_PRE_STOP:
@@ -72,7 +71,7 @@ func init() {
 					toPiMsg.Type = toPiMsg.MessageType()
 
 					//发送消息到所有pi
-					TcpMessages.SendToAllPi(toPiMsg)
+					SkuRun.SendToAllPi(toPiMsg)
 
 					ChanWeb.SendWebLog(WebKey.LOG_TYPE_SERVER,"通知客户端--关闭TSI校准")
 				case TcpKey.TYPE_CLIENT_TSI_TEST_START:
@@ -81,7 +80,7 @@ func init() {
 					toPiMsg.Type = toPiMsg.MessageType()
 
 					//发送消息到所有pi
-					TcpMessages.SendToAllPi(toPiMsg)
+					SkuRun.SendToAllPi(toPiMsg)
 
 					ChanWeb.SendWebLog(WebKey.LOG_TYPE_SERVER,"通知客户端--启动TSI测试")
 				case TcpKey.TYPE_CLIENT_TSI_TEST_STOP:
@@ -90,7 +89,7 @@ func init() {
 					toPiMsg.Type = toPiMsg.MessageType()
 
 					//发送消息到所有pi
-					TcpMessages.SendToAllPi(toPiMsg)
+					SkuRun.SendToAllPi(toPiMsg)
 
 					ChanWeb.SendWebLog(WebKey.LOG_TYPE_SERVER,"通知客户端--关闭TSI测试")
 				}

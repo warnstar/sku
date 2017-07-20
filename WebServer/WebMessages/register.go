@@ -49,6 +49,9 @@ func Register(ws *websocket.Conn) {
 			//开启读取tsi数据
 			Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
 			Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
+
+			//将旧tsi文件迁移到历史文件夹
+			Tsi.MoveFileToHistory()
 		case WebKey.WEB_TSI_TEST_PRE:
 			//处理 tsi 校验
 			tsiChan := <-Tsi.TsiClientChan

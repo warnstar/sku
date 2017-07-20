@@ -60,13 +60,13 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 		return
 	}
 
-	//设置客户端校准状态
+	//设置客户端测试状态
 	thisPi.IsTsiTestStart = true
 	server.UpdatePiByConnId(connId, thisPi)
 
 	//设置tcp服务器 变量
 	SkuRun.PiServer <- server
 
-	//通知浏览器-客户端已经时间同步
+	//通知浏览器-客户端已经开始采集tsi数据
 	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v确认已启动TSI测试", thisPi.Info.Name))
 }

@@ -1,7 +1,6 @@
-package TcpMessages
+package SkuRun
 
 import (
-	"sku/SkuServer/SkuRun"
 	"github.com/leesper/holmes"
 	"github.com/leesper/tao"
 )
@@ -9,8 +8,8 @@ import (
 func SendToAllPi(toPiMsg tao.Message) {
 
 	//获取tcp服务器对象
-	tcpServer := <-SkuRun.PiServer
-	SkuRun.PiServer <- tcpServer
+	tcpServer := <-PiServer
+	PiServer <- tcpServer
 
 	for _, thisPi := range tcpServer.Pis {
 		err := (*(thisPi.ConnWriter)).Write(toPiMsg)
