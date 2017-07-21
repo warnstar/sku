@@ -4,6 +4,7 @@ import (
 	"errors"
 	"sku/SkuServer/SkuPi"
 	"github.com/leesper/holmes"
+	"fmt"
 )
 
 type Server struct {
@@ -57,6 +58,7 @@ func (s *Server) AddPi(pi SkuPi.Pi) {
 
 func (s *Server) GetPiByConnId(connId int64) (pi SkuPi.Pi, err error) {
 	for _, onePi := range s.Pis {
+
 		//此pi已存在
 		if onePi.ConnId == connId {
 			return onePi, nil
@@ -76,6 +78,36 @@ func (s *Server) UpdatePiByConnId(connId int64, pi SkuPi.Pi) {
 	}
 }
 
+func GetClientTree() (treeData [] ClientTreeNode) {
+	s := <- PiServer
+
+	for k,thisPi := range s.Pis {
+		if thisPi.Ctx.Err() != nil {
+			holmes.Debugln(thisPi,thisPi.Ctx.Err())
+
+			// 去除已断开的链接
+			s.Pis = append(s.Pis[:k], s.Pis[k+1:]...)
+			s.PiCurNum--
+			continue
+		} else {
+			oneNode := new(ClientTreeNode)
+			oneNode.Fd = thisPi.ConnId
+			oneNode.Label = thisPi.Info.Name
+
+			connModules := fmt.Sprintf("模块数：%v",thisPi.Info.ConnectNow)
+			isTimeSync := fmt.Sprintf("时间同步：%v",thisPi.IsTimeSync)
+
+			oneNode.Children = append(oneNode.Children, ClientTreeNode{connModules,0,nil})
+			oneNode.Children = append(oneNode.Children, ClientTreeNode{isTimeSync,0,nil})
+
+			treeData = append(treeData, *oneNode)
+		}
+	}
+
+	PiServer <- s
+
+	return treeData
+}
 
 func (s *Server) PrintInfo() {
 	holmes.Infof("总链接的Pi数量：%d\n", len(s.Pis))

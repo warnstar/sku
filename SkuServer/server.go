@@ -10,6 +10,9 @@ import (
 	_ "sku/SkuServer/TcpMessages"
 	"sku/base/config"
 	"syscall"
+	"sku/Channel/ChanWeb"
+	"sku/WebServer/WebKey"
+	"sku/SkuServer/SkuRun"
 )
 
 // SkuServer represents the Sku server.
@@ -26,10 +29,16 @@ func NewSkuServer() *SkuServer {
 
 	onClose := tao.OnCloseOption(func(conn tao.WriteCloser) {
 		holmes.Infoln("closing client")
+
+		//发送pi树形数据到浏览器
+		ChanWeb.SendWeb(WebKey.WEB_CLIENT_TREE_DATA,SkuRun.GetClientTree())
 	})
 
 	onError := tao.OnErrorOption(func(conn tao.WriteCloser) {
 		holmes.Infoln("on error")
+
+		//发送pi树形数据到浏览器
+		ChanWeb.SendWeb(WebKey.WEB_CLIENT_TREE_DATA,SkuRun.GetClientTree())
 	})
 
 	onMessage := tao.OnMessageOption(func(msg tao.Message, conn tao.WriteCloser) {

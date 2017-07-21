@@ -12,7 +12,7 @@ func SendToAllPi(toPiMsg tao.Message) {
 	PiServer <- tcpServer
 
 	for _, thisPi := range tcpServer.Pis {
-		err := (*(thisPi.ConnWriter)).Write(toPiMsg)
+		err := thisPi.ConnWriter.Write(toPiMsg)
 		if err != nil {
 			holmes.Errorln(err.Error(),thisPi.Info)
 		}

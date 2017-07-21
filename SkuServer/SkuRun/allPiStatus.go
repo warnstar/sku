@@ -11,11 +11,11 @@ func (s *Server) CheckPiAllTimeSync() bool {
 
 	if timeSyncNum >= s.PiMaxNum {
 		s.IsAllTimeSync = true
-
-		return true
+	} else {
+		s.IsAllTimeSync = false
 	}
 
-	return false
+	return s.IsAllTimeSync
 }
 
 func (s *Server) CheckPiAllWriteKb() bool {
@@ -28,10 +28,11 @@ func (s *Server) CheckPiAllWriteKb() bool {
 
 	if Num >= s.PiMaxNum {
 		s.IsAllWriteKb = true
-		return true
+	} else {
+		s.IsAllWriteKb = false
 	}
 
-	return false
+	return s.IsAllWriteKb
 }
 
 func (s *Server) CheckPiAllSendResult() bool {
@@ -44,13 +45,18 @@ func (s *Server) CheckPiAllSendResult() bool {
 
 	if Num >= s.PiMaxNum {
 		s.IsAllSendResult = true
-		return true
+	} else {
+		s.IsAllSendResult = false
 	}
 
-	return false
+	return s.IsAllSendResult
 }
 
-
 func (s *Server) CheckPiAllConnected() bool {
+	if s.PiCurNum >= s.PiMaxNum {
+		s.IsAllConnected = true
+	} else {
+		s.IsAllConnected = false
+	}
 	return s.IsAllConnected
 }

@@ -74,4 +74,7 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	}
 
 	SkuRun.PiServer <- server
+
+	//发送pi树形数据到浏览器
+	ChanWeb.SendWeb(WebKey.WEB_CLIENT_TREE_DATA, SkuRun.GetClientTree())
 }

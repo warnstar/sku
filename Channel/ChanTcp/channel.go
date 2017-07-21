@@ -50,6 +50,7 @@ func init() {
 					WebRun.ServerChan <- webServer
 
 					server.PiMaxNum = webServer.ClientNum
+
 					server.TsiServerAddress = webServer.TsiHost
 					SkuRun.PiServer <- server
 				case WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK:

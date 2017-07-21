@@ -69,6 +69,7 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	server := <-SkuRun.PiServer
 
 	thisPi, err := server.GetPiByConnId(connId)
+
 	if err != nil {
 		holmes.Errorln("client-time-sync: 当前链接对应的pi不存在")
 		return

@@ -60,7 +60,8 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	//pi信息
 	onePi := new(SkuPi.Pi)
 	onePi.ConnId = tao.NetIDFromContext(ctx)
-	onePi.ConnWriter = &conn
+	onePi.ConnWriter = conn
+	onePi.Ctx = ctx
 	onePi.Info = new(SkuPi.Info)
 	onePi.Info.Name = msg.Content.Name
 	onePi.Info.ConnectNow = msg.Content.ConnectNow
@@ -88,5 +89,9 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 		ChanWeb.SendWeb(WebKey.WEB_CLIENT_CONNECT_COMPLETE, "")
 	}
 
+	//写入服务器信息
 	SkuRun.PiServer <- server
+
+	//发送pi树形数据到浏览器
+	ChanWeb.SendWeb(WebKey.WEB_CLIENT_TREE_DATA,SkuRun.GetClientTree())
 }

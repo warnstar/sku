@@ -2,11 +2,13 @@ package SkuPi
 
 import (
 	"github.com/leesper/tao"
+	"context"
 )
 
 type Pi struct {
 	ConnId     int64
-	ConnWriter *tao.WriteCloser
+	Ctx     	context.Context
+	ConnWriter tao.WriteCloser
 	Info       *Info
 	IsTimeSync bool
 	IsTsiPreStart bool
