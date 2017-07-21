@@ -67,6 +67,9 @@ func init() {
 							ChanWeb.SendWeb(WebKey.WEB_CLIENT_TIME_SYNC_COMPLETE, "")
 						}
 					}
+
+					//发送pi树形数据到浏览器
+					ChanWeb.SendWeb(WebKey.WEB_CLIENT_TREE_DATA,SkuRun.GetClientTree())
 				case TcpKey.TYPE_CLIENT_TSI_TEST_PRE_START:
 					//通知全部pi启动tsi校准
 					toPiMsg := new(ClientTsiTestPreStart.Message)

@@ -1,8 +1,7 @@
-package ClientGetFile
+package ClientGetFileInfo
 
 import (
 	"context"
-
 	"encoding/json"
 	"fmt"
 	"github.com/leesper/holmes"
@@ -27,12 +26,12 @@ func (em Message) Serialize() ([]byte, error) {
 
 // MessageNumber returns message type number.
 func (em Message) MessageNumber() int32 {
-	return 1102
+	return 1101
 }
 
 // MessageType returns message type .
 func (em Message) MessageType() string {
-	return "client_get_file"
+	return "client_get_file_info"
 }
 
 // DeserializeMessage deserializes bytes into Message.
@@ -65,8 +64,7 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	msg := tao.MessageFromContext(ctx).(Message)
 	fileName := msg.Content.(string)
 
-	fileContent, err := Tsi.GetFile(fileName)
-	msg.Content = string(fileContent)
+	msg.Content, err = Tsi.GetFileInfo(fileName)
 
 	if err != nil {
 		holmes.Errorf("获取文件信息错误：%v(%v)\n",err.Error(), fileName)
@@ -80,6 +78,6 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 		holmes.Errorf("发送文件消息失败：%v\n",err.Error())
 	}
 
-	//通知浏览器-pi已经获取文件
-	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已获取文件", thisPi.Info.Name))
+	//通知浏览器-pi已经获取文件信息
+	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已获取文件信息", thisPi.Info.Name))
 }

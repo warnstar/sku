@@ -3,6 +3,7 @@ package ChanWeb
 import (
 	"sku/WebServer/WebKey"
 	"sku/WebServer/WebRun"
+	"sku/SkuServer/SkuRun"
 )
 
 type Message struct {
@@ -35,6 +36,9 @@ func init() {
 					WebRun.SendToClient(msg)
 				case WebKey.WEB_TSI_CHECK:
 					WebRun.SendToClient(msg)
+
+					//发送pi树形数据到浏览器
+					SendWeb(WebKey.WEB_CLIENT_TREE_DATA,SkuRun.GetClientTree())
 				case WebKey.WEB_TSI_NOW_DATA:
 					WebRun.SendToClient(msg)
 				case WebKey.WEB_TSI_TEST_MODULE_RESULT:

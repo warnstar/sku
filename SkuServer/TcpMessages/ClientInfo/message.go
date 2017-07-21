@@ -19,8 +19,8 @@ import (
 type Message struct {
 	Type    string `json:"type"`
 	Content struct {
-		Name       string
-		ConnectNow int
+		Name       string `json:"name"`
+		ConnectNow int `json:"connect_now"`
 	} `json:"content"`
 }
 

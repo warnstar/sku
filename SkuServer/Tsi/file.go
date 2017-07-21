@@ -8,6 +8,7 @@ import (
 	"io"
 	"sku/base"
 	"io/ioutil"
+	"sku/base/utils/encrypt"
 )
 
 func GetSavePath(saveType string) string {
@@ -51,9 +52,9 @@ func MoveFileToHistoryByType(fileType string, fileTime string) {
 }
 
 type FileInfo struct {
-	Name	string `json:"name"`
-	Size 	int64		`json:"size"`
-	Content string 	`json:"content"`
+	Name	string  `json:"name"`
+	Size 	int64	`json:"size"`
+	Md5 	string 	`json:"md5"`
 }
 
 func GetFileInfo(fileName string) (f FileInfo,err error) {
@@ -66,14 +67,29 @@ func GetFileInfo(fileName string) (f FileInfo,err error) {
 		f.Name = info.Name()
 		f.Size = info.Size()
 
-		content, err := ioutil.ReadFile(filePath)
+		md5,err := encrypt.Md5File(filePath)
 		if err != nil {
-			return f, err
+			holmes.Errorf("获取文件信息Md5错误：%v\n",err.Error())
 		}
 
-		f.Content = string(content)
-
+		f.Md5 = md5
 		return f,nil
+	}
+}
+
+func GetFile(fileName string) (content []byte,err error) {
+	filePath := GetSavePath(fileName)
+
+	_, err = os.Stat(filePath)
+	if err != nil {
+		return content, err
+	} else {
+		content, err := ioutil.ReadFile(filePath)
+		if err != nil {
+			return content, err
+		}
+
+		return content,nil
 	}
 }
 
