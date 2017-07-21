@@ -25,6 +25,14 @@ func init() {
 	PiServer <- &s
 }
 
+func ResetServer() {
+	<- PiServer
+	s := Server{PiMaxNum: 2, TsiServerAddress: "172.16.15.214"}
+	PiServer <- &s
+
+	holmes.Infoln("重置Tcp服务器")
+}
+
 func (s *Server) AddPi(pi SkuPi.Pi) {
 	//此时已有pi链接
 	isNew := true

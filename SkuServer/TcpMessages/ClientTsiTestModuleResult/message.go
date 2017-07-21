@@ -10,12 +10,24 @@ import (
 	"sku/SkuServer/SkuRun"
 	"sku/WebServer/WebKey"
 	"sku/Channel/ChanWeb"
+	"math"
 )
 
 // Message defines the echo message.
 type Message struct {
 	Type    string `json:"type"`
-	Content interface{}  `json:"content"`
+	Content [] Module `json:"content"`
+}
+
+type Module struct {
+	Status string `json:"status"`
+	ModuleId int `json:"module_id"`
+	Info [] struct{
+		Stage string `json:"stage"`
+		Total int `json:"total"`
+		Error int `json:"error"`
+		Proportion float64 `json:"proportion"`
+	} `json:"info"`
 }
 
 // Serialize serializes Message into bytes.
@@ -51,6 +63,8 @@ func DeserializeMessage(data []byte) (message tao.Message, err error) {
 func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	connId := tao.NetIDFromContext(ctx)
 
+	msg := tao.MessageFromContext(ctx).(Message)
+
 	//取tcp服务器 变量
 	server := <-SkuRun.PiServer
 
@@ -60,13 +74,42 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 		return
 	}
 
-	//设置客户端 写入kb状态
+	//设置pi 上报分析结果
 	thisPi.IsSendResult = true
 	server.UpdatePiByConnId(connId, thisPi)
 
 	//设置tcp服务器 变量
 	SkuRun.PiServer <- server
 
-	//通知浏览器-客户端已 上传测试结果
+	//分析的结果数据加工
+	for k,module := range msg.Content {
+		msg.Content[k].Status = "success"
+
+		for kk,state := range module.Info {
+			if state.Error != 0 {
+				msg.Content[k].Status = "error"
+			}
+
+			var errRate float64
+			if state.Total != 0 {
+				errRate = float64(state.Error)/float64(state.Total)
+			} else {
+				errRate = 0
+				msg.Content[k].Status = "error"
+			}
+			errRate = math.Trunc(errRate*1e2 + 0.5)*1e-2
+			msg.Content[k].Info[kk].Proportion = errRate * 100
+		}
+	}
+
+	result := struct {
+		Pid string `json:"pid"`
+		Modules [] Module `json:"modules"`
+	}{thisPi.Info.Name,msg.Content}
+
+	//将结果发送至客户端
+	ChanWeb.SendWeb(WebKey.WEB_TSI_TEST_MODULE_RESULT, result)
+
+	//通知浏览器-pi已上传测试结果
 	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已分析完毕", thisPi.Info.Name))
 }

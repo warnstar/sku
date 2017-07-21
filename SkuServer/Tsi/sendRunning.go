@@ -19,22 +19,27 @@ func sendRunning(conn net.Conn) {
 				go func(){
 					switch sendMsg.Type {
 					case TSI_SERVER_EXIT:
-						_, err := conn.Write([]byte(TSI_STOP))
-						holmes.Infoln("TSI 服务器 关闭成功")
+						isReceiveDataContinue = false
+						isContinue = false
 
+						_, err := conn.Write([]byte(TSI_STOP))
 						if err != nil {
-							println(err.Error())
+							holmes.Errorf("TSI 服务器 关闭失败：%v\n",err.Error())
 						} else {
+							holmes.Infoln("TSI 服务器 关闭成功")
+
 							//断开与tsi服务器连接
-							conn.Close()
+							err := conn.Close()
+							if err != nil {
+								holmes.Errorf("TSI 会话 关闭失败：%v\n",err.Error())
+							} else {
+								holmes.Infoln("TSI 会话 关闭成功")
+							}
 						}
 
-						tsiConn := <-TsiClientChan
-						tsiConn.IsRunning = false
-						tsiConn.Conn = nil
-						TsiClientChan <- tsiConn
+						<-TsiClientChan
+						TsiClientChan <- new(TsiConnect)
 
-						isContinue = false
 					case TSI_SERVER_START:
 						//重置运行时状态变量
 						resetChan()

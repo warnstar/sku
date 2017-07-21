@@ -3,7 +3,6 @@ package ChanWeb
 import (
 	"sku/WebServer/WebKey"
 	"sku/WebServer/WebRun"
-	"sku/SkuServer/TcpMessages/TcpKey"
 )
 
 type Message struct {
@@ -38,7 +37,7 @@ func init() {
 					WebRun.SendToClient(msg)
 				case WebKey.WEB_TSI_NOW_DATA:
 					WebRun.SendToClient(msg)
-				case TcpKey.TYPE_CLIENT_TSI_TEST_MODULE_RESULT:
+				case WebKey.WEB_TSI_TEST_MODULE_RESULT:
 					WebRun.SendToClient(msg)
 				case WebKey.WEB_CAN_START_TSI_TEST:
 					WebRun.SendToClient(msg)

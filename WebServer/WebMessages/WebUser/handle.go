@@ -52,6 +52,11 @@ func ProcessMessage(ws *websocket.Conn, content interface{}) {
 
 	wsServer := <-WebRun.ServerChan
 
+	//关闭旧链接
+	if wsServer.ClientWs != nil {
+		wsServer.ClientWs.Close()
+	}
+
 	wsServer.ClientWs = ws
 	wsServer.TsiHost = msg.TsiHost
 	wsServer.Host = msg.Host

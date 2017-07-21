@@ -16,12 +16,24 @@ type Server struct {
 	ClientWs        *websocket.Conn
 }
 
-func (s *Server) ConnectSkuServer() {
-
-}
 
 //全局服务器变量
 var ServerChan = make(chan *Server, 1)
+
+
+func init() {
+	s := Server{}
+	ServerChan <- &s
+}
+
+func ResetServer() {
+	<-ServerChan
+
+	s := Server{}
+	ServerChan <- &s
+
+	holmes.Infoln("重置websocket服务器")
+}
 
 func SendToClient(msg interface{}) {
 	wsServer := <-ServerChan
@@ -38,10 +50,4 @@ func SendToClient(msg interface{}) {
 		holmes.Infof("浏览器客户端未连接")
 	}
 
-}
-
-func init() {
-
-	s := Server{}
-	ServerChan <- &s
 }

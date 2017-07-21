@@ -37,6 +37,9 @@ func Register(ws *websocket.Conn) {
 		case WebKey.WEB_USER:
 			WebUser.ProcessMessage(ws, message.Content)
 		case WebKey.WEB_TSI_CHECK:
+			//将旧tsi文件迁移到历史文件夹
+			Tsi.MoveFileToHistory()
+
 			//处理 tsi 检查
 			tsiChan := <-Tsi.TsiClientChan
 			tsiChan.Type = Tsi.TSI_RUN_TYPE_CHECK
@@ -49,9 +52,6 @@ func Register(ws *websocket.Conn) {
 			//开启读取tsi数据
 			Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
 			Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
-
-			//将旧tsi文件迁移到历史文件夹
-			Tsi.MoveFileToHistory()
 		case WebKey.WEB_TSI_TEST_PRE:
 			//处理 tsi 校验
 			tsiChan := <-Tsi.TsiClientChan
@@ -77,7 +77,11 @@ func Register(ws *websocket.Conn) {
 		case WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK:
 			ChanTcp.SendTcp(WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK, "")
 		case WebKey.WEB_CLIENT_EXIT:
+			//通知tcp服务器重启
 			ChanTcp.SendTcp(WebKey.WEB_CLIENT_EXIT, "")
+
+			//tsi客户端断开连接
+			Tsi.ControlTsi(Tsi.TSI_SERVER_EXIT,"")
 		}
 	}
 }

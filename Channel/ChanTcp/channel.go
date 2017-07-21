@@ -10,6 +10,8 @@ import (
 	"sku/SkuServer/TcpMessages/ClientTsiTestStart"
 	"sku/SkuServer/TcpMessages/ClientTsiTestStop"
 	"sku/SkuServer/TcpMessages/ClientTsiTestPreStop"
+	"sku/SkuServer/TcpMessages/ClientExit"
+	"github.com/leesper/holmes"
 )
 
 type Message struct {
@@ -33,6 +35,14 @@ func init() {
 			//fmt.Printf("tcpServer channel 消息接收：%v\n", *msg)
 			go func(){
 				switch msg.Type {
+				case WebKey.WEB_CLIENT_EXIT:
+					toPiMsg := new(ClientExit.Message)
+					toPiMsg.Type = toPiMsg.MessageType()
+					//通知所有客户端进行重启
+					SkuRun.SendToAllPi(toPiMsg)
+					holmes.Infoln("通知客户端重启")
+
+					SkuRun.ResetServer()
 				case WebKey.WEB_USER:
 					//设置服务器信息 （tsi服务器地址，最大客户端数量）
 					server := <-SkuRun.PiServer

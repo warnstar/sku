@@ -38,6 +38,7 @@ func init() {
 	TsiRunningStatusChan <- new(TsiRunningStatus)
 }
 
+
 func ControlTsi(msgType string, msgContent string) {
 	msg := Message{msgType, msgContent}
 
