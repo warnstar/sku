@@ -23,4 +23,5 @@ type Pi struct {
 type Info struct {
 	Name       string
 	ConnectNow int
+	Member [] int
 }

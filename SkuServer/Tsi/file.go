@@ -11,6 +11,10 @@ import (
 	"sku/base/utils/encrypt"
 )
 
+func GetSavePathByName(fileName string) string {
+	return base.PATH_RUNTIME+ "/" + fileName
+}
+
 func GetSavePath(saveType string) string {
 	savePath := base.PATH_RUNTIME
 	if saveType == TSI_RUN_TYPE_TEST_PRE {
@@ -58,9 +62,10 @@ type FileInfo struct {
 }
 
 func GetFileInfo(fileName string) (f FileInfo,err error) {
-	filePath := GetSavePath(fileName)
+	filePath := GetSavePathByName(fileName)
 
 	info, err := os.Stat(filePath)
+
 	if err != nil {
 		return f, err
 	} else {
@@ -78,7 +83,7 @@ func GetFileInfo(fileName string) (f FileInfo,err error) {
 }
 
 func GetFile(fileName string) (content []byte,err error) {
-	filePath := GetSavePath(fileName)
+	filePath := GetSavePathByName(fileName)
 
 	_, err = os.Stat(filePath)
 	if err != nil {

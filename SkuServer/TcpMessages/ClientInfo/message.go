@@ -21,6 +21,7 @@ type Message struct {
 	Content struct {
 		Name       string `json:"name"`
 		ConnectNow int `json:"connect_now"`
+		Member [] int
 	} `json:"content"`
 }
 
@@ -56,7 +57,7 @@ func DeserializeMessage(data []byte) (message tao.Message, err error) {
 // ProcessMessage process the logic of echo message.
 func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	msg := tao.MessageFromContext(ctx).(Message)
-
+	fmt.Printf("%v\n",msg)
 	//pi信息
 	onePi := new(SkuPi.Pi)
 	onePi.ConnId = tao.NetIDFromContext(ctx)
@@ -65,6 +66,7 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	onePi.Info = new(SkuPi.Info)
 	onePi.Info.Name = msg.Content.Name
 	onePi.Info.ConnectNow = msg.Content.ConnectNow
+	onePi.Info.Member = msg.Content.Member
 
 	server := <-SkuRun.PiServer
 

@@ -21,6 +21,7 @@ func main() {
 
 	go func() {
 		WebServer.Run()
+		println("end websocket")
 		endRunning <- true
 	}()
 
