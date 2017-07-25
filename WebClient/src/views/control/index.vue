@@ -3,12 +3,16 @@
 
         <el-row type="flex" class="row-bg control_top" justify="center" style="margin-top: 75px;">
             <el-col :span="5" class="row-bg" style="margin: 10px;border: thin;">
+                <span><b>客户端：</b></span>
+
                 <router-link to="/setting"><el-button class="el-icon-setting"></el-button></router-link>
                 <el-button @click="alertToReset">重置</el-button>
             </el-col>
 
-            <el-col :span="15" class="row-bg">
+            <el-col :span="15" class="row-bg" style="margin: 10px;border: thin;">
+                <span><b>服务器：</b></span>
 
+                <el-button @click="serverCtl">启动</el-button>
             </el-col>
         </el-row>
 
@@ -143,6 +147,7 @@
 <script>
     import { message } from '../../socket/message';
     import { clientLight } from '../../components/clientLight';
+    import { serverControl } from '../../components/serverControl';
     import { tsiStatus } from '../../components/tsiStatus';
     import popover from "element-ui/packages/popover/src/directive";
     import"Chart.js"
@@ -189,6 +194,9 @@
 			};
 		},
 		methods: {
+            serverCtl() {
+                serverControl.start();
+            },
             alertToReset() {
                 var _this = this;
                 this.$alert('请确认是否重置应用!!!',{

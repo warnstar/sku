@@ -5,6 +5,7 @@ import (
 	"sku/SkuServer/SkuPi"
 	"github.com/leesper/holmes"
 	"fmt"
+	"sku/base/config"
 )
 
 type Server struct {
@@ -22,16 +23,25 @@ type Server struct {
 var PiServer = make(chan *Server, 1)
 
 func init() {
-	s := Server{PiMaxNum: 2, TsiServerAddress: "172.16.15.214"}
+
+	s := Server{PiMaxNum: 2, TsiServerAddress: config.Ini.String("tsi.host")}
 	PiServer <- &s
 }
 
 func ResetServer() {
+	//取出服务器全局变量
 	<- PiServer
-	s := Server{PiMaxNum: 2, TsiServerAddress: "172.16.15.214"}
+
+	//关闭所有pi的链接
+	//for _,oldPis := range oldPiServer.Pis {
+	//	oldPis.ConnWriter.Close()
+	//}
+	//holmes.Infoln("重置Tcp服务器")
+
+	s := Server{PiMaxNum: 2, TsiServerAddress: config.Ini.String("tsi.host")}
+
 	PiServer <- &s
 
-	holmes.Infoln("重置Tcp服务器")
 }
 
 func (s *Server) AddPi(pi SkuPi.Pi) {

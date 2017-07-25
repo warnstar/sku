@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+
 	defer holmes.Start().Stop()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 

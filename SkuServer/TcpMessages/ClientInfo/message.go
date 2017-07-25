@@ -57,7 +57,7 @@ func DeserializeMessage(data []byte) (message tao.Message, err error) {
 // ProcessMessage process the logic of echo message.
 func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	msg := tao.MessageFromContext(ctx).(Message)
-	fmt.Printf("%v\n",msg)
+
 	//pi信息
 	onePi := new(SkuPi.Pi)
 	onePi.ConnId = tao.NetIDFromContext(ctx)

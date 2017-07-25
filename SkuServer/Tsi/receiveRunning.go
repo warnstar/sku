@@ -9,7 +9,9 @@ import (
 	"strings"
 	"sku/Channel/ChanWeb"
 	"sku/Channel/ChanTcp"
+	"github.com/leesper/holmes"
 )
+
 
 /**
 	tsi数据接收线程
@@ -17,7 +19,17 @@ import (
 func recvRunning(conn net.Conn) {
 	go func() {
 		reader := bufio.NewReader(conn)
+		holmes.Infoln("TSI 数据接收--启动线程")
+
 		for {
+			tsiChan := <- TsiClientChan
+			TsiClientChan <- tsiChan
+
+			if !tsiChan.IsRunning {
+				holmes.Infoln("TSI 数据接收--结束线程")
+				break
+			}
+
 			msg, err := reader.ReadString('\n')
 			if err != nil {
 				println(err)
@@ -30,7 +42,6 @@ func recvRunning(conn net.Conn) {
 					println(err.Error())
 				}
 				tsiNum := int(tsiNumFloat * 1000)
-
 				analysisTsi(tsiNum)
 			}
 		}
