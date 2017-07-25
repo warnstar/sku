@@ -51,6 +51,6 @@ func init() {
 	tao.Register(ClientGetFileInfo.Message{}.MessageNumber(), ClientGetFileInfo.DeserializeMessage, ClientGetFileInfo.ProcessMessage)
 
 	//客户端获取文件
-	tao.Register(ClientGetFile.Message{}.MessageNumber(), ClientGetFile.DeserializeMessage, ClientGetFile.ProcessMessage)
+	tao.Register(ClientGetFile.Message("").MessageNumber(), ClientGetFile.DeserializeMessage, ClientGetFile.ProcessMessage)
 
 }

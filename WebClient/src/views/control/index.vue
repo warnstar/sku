@@ -373,7 +373,9 @@
                         break;
                     case message.WEB_CLIENT_TREE_DATA :
                         // 终端树数据更新
-                        _this.treeData = data.content;
+                        if(data.content != null) {
+                            _this.treeData = data.content;
+                        }
                         break;
                     default:
                         break;

@@ -1,17 +1,11 @@
-package ClientGetFile
+package ClientGetFileTsiTest
 
 import (
 	"context"
 
-	"fmt"
 	"github.com/leesper/holmes"
 	"github.com/leesper/tao"
 	"sku/SkuServer/SkuRun"
-	"sku/WebServer/WebKey"
-	"sku/Channel/ChanWeb"
-	"sku/SkuServer/Tsi"
-	"sku/SkuServer/TcpMessages/ClientGetFileTsiPre"
-	"sku/SkuServer/TcpMessages/ClientGetFileTsiTest"
 )
 
 // Message defines the echo message.
@@ -24,12 +18,12 @@ func (em Message) Serialize() ([]byte, error) {
 
 // MessageNumber returns message type number.
 func (em Message) MessageNumber() int32 {
-	return 1102
+	return 1107
 }
 
 // MessageType returns message type .
 func (em Message) MessageType() string {
-	return "client_get_file"
+	return "client_get_file_tsi_test"
 }
 
 // DeserializeMessage deserializes bytes into Message.
@@ -45,35 +39,9 @@ func ProcessMessage(ctx context.Context, conn tao.WriteCloser) {
 	server := <-SkuRun.PiServer
 	SkuRun.PiServer <- server
 
-	thisPi, err := server.GetPiByConnId(connId)
+	_, err := server.GetPiByConnId(connId)
 	if err != nil {
 		holmes.Errorln("client-time-sync: 当前链接对应的pi不存在")
 		return
 	}
-
-	msg := tao.MessageFromContext(ctx).(Message)
-	fileName := string(msg)
-
-	fileContent, err := Tsi.GetFile(fileName)
-	if err != nil {
-		holmes.Errorf("获取文件信息错误：%v(%v)\n",err.Error(), fileName)
-		return
-	}
-
-	var fileMsg tao.Message
-	if fileName == Tsi.FILE_TSI {
-		fileMsg = ClientGetFileTsiPre.Message(fileContent)
-	} else {
-		fileMsg = ClientGetFileTsiTest.Message(fileContent)
-	}
-
-	//将文件发送至pi
-	err = conn.Write(fileMsg)
-
-	if err != nil {
-		holmes.Errorf("发送文件消息失败：%v\n",err.Error())
-	}
-
-	//通知浏览器-pi已经获取文件
-	ChanWeb.SendWebLog(WebKey.LOG_TYPE_CLIENT, fmt.Sprintf("%v已获取文件", thisPi.Info.Name))
 }
