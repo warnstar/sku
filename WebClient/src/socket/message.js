@@ -94,6 +94,7 @@ export var message = {
     },
     sendTsiCheck : function() {
         var msg = this.getMsg(this.WEB_TSI_CHECK, '');
+        console.log(msg);
         this.socket.send(msg)
     },
     sendClientConnectAndTimeSyncCheck : function() {

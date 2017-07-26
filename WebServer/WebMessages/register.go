@@ -49,9 +49,11 @@ func Register(ws *websocket.Conn) {
 				Tsi.Connect()
 			}
 
-			//开启读取tsi数据
-			Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
-			Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
+			if tsiChan.IsRunning {
+				//开启读取tsi数据
+				Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
+				Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
+			}
 		case WebKey.WEB_TSI_TEST_PRE:
 			//处理 tsi 校验
 			tsiChan := <-Tsi.TsiClientChan

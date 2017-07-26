@@ -51,6 +51,8 @@ func sendRunning(conn net.Conn) {
 							holmes.Infoln("TSI 服务器 启动成功")
 						}
 					case TSI_SERVER_STOP:
+						<-TsiClientChan
+						TsiClientChan <- new(TsiConnect)
 						//关闭数据接收
 						_, err := conn.Write([]byte(TSI_STOP))
 						if err != nil {
@@ -58,7 +60,7 @@ func sendRunning(conn net.Conn) {
 							//关闭连接
 							ControlTsi(TSI_SERVER_EXIT, "")
 						} else {
-							holmes.Infoln("关闭TSI成功")
+							holmes.Infoln("TSI 服务器 关闭成功")
 						}
 
 						ControlTsi(TSI_SERVER_RECEIVE_DATA_STOP, "")
@@ -67,6 +69,16 @@ func sendRunning(conn net.Conn) {
 						go func() {
 							isReceiveDataContinue = true
 							holmes.Infoln("TSI 发送接收请求 - 启动线程")
+
+							tsiClient := <-TsiClientChan
+							tsiClient.RecvNum = 0
+							tsiClient.IsStartedReceive = true
+							TsiClientChan <- tsiClient
+
+
+							//启动客户端接收线程
+							recvRunning(conn)
+
 							for {
 								if isReceiveDataContinue {
 									//每隔1s发送一次请求命令
@@ -79,10 +91,16 @@ func sendRunning(conn net.Conn) {
 									}
 									time.Sleep(time.Second)
 								} else {
+									tsiClient := <-TsiClientChan
+									tsiClient.RecvNum = 0
+									tsiClient.IsStartedReceive = false
+									TsiClientChan <- tsiClient
+
 									holmes.Infoln("TSI 发送接收请求 - 结束线程")
 									break
 								}
 							}
+
 						}()
 					case TSI_SERVER_RECEIVE_DATA_STOP:
 						isReceiveDataContinue = false

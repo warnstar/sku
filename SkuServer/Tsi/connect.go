@@ -16,7 +16,9 @@ type Message struct {
 type TsiConnect struct {
 	Conn      *net.TCPConn
 	IsRunning bool
+	IsStartedReceive bool
 	Type      string
+	RecvNum 	int
 }
 
 // 共享变量 - tsi 链接对象
@@ -46,7 +48,7 @@ func ControlTsi(msgType string, msgContent string) {
 	ToSendChan <- &msg
 }
 
-func Connect() {
+func Connect() bool {
 	server := <-SkuRun.PiServer
 	SkuRun.PiServer <- server
 
@@ -54,13 +56,13 @@ func Connect() {
 	if err != nil {
 		holmes.Debugf("Tsi 服务器连接失败:%s\n" ,err.Error())
 		ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
-		return
+		return false
 	}
 	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
 		holmes.Debugf("Tsi 服务器连接失败:%s\n" ,err.Error())
 		ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
-		return
+		return false
 	}
 
 	tsiConn := <-TsiClientChan
@@ -72,6 +74,5 @@ func Connect() {
 	//启动客户端发送线程
 	sendRunning(conn)
 
-	//启动客户端接收线程
-	recvRunning(conn)
+	return true
 }

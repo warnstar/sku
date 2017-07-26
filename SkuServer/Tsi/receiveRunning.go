@@ -25,21 +25,25 @@ func recvRunning(conn net.Conn) {
 			tsiChan := <- TsiClientChan
 			TsiClientChan <- tsiChan
 
-			if !tsiChan.IsRunning {
+			if !tsiChan.IsStartedReceive {
 				holmes.Infoln("TSI 数据接收--结束线程")
 				break
 			}
 
 			msg, err := reader.ReadString('\n')
+			println(msg)
 			if err != nil {
-				println(err)
+				holmes.Errorf("TSI 数据接收 -- read数据错误：%s\n",err.Error())
 			}
 			res := strings.Split(msg, ",")
-			if len(res) == 2 {
+
+			if len(res) >= 2 {
 				tsiStr := res[1]
-				tsiNumFloat, err := strconv.ParseFloat(tsiStr[:len(tsiStr)-1], 32)
+				tsiStr = strings.Replace(tsiStr, "\n", "", -1)
+
+				tsiNumFloat, err := strconv.ParseFloat(tsiStr, 32)
 				if err != nil {
-					println(err.Error())
+					holmes.Errorf("TSI数据接收：%s\n",err.Error())
 				}
 				tsiNum := int(tsiNumFloat * 1000)
 				analysisTsi(tsiNum)
@@ -61,19 +65,21 @@ type TsiRunningStatus struct {
  */
 func analysisTsi(pm25 int) {
 	tsiChan := <-TsiClientChan
+	tsiChan.RecvNum++
 	TsiClientChan <- tsiChan
 
 	tsiRunStatus := <-TsiRunningStatusChan
 
 	if tsiChan.Type == TSI_RUN_TYPE_CHECK {
 		if pm25 > 0 {
-			ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.SUCCESS)
+			if tsiChan.RecvNum >= 3 {
+				ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.SUCCESS)
 
-			// 关闭数据接收
-			ControlTsi(TSI_SERVER_STOP, "")
+				// 关闭数据接收
+				ControlTsi(TSI_SERVER_STOP, "")
+			}
 		}
 	} else {
-
 		//发送当前tsi值到浏览器
 		ChanWeb.SendWeb(WebKey.WEB_TSI_NOW_DATA, pm25)
 
