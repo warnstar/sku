@@ -5,6 +5,7 @@ import (
 	"sku/WebServer/WebKey"
 	"github.com/leesper/holmes"
 	"sku/Channel/ChanWeb"
+	"sku/SkuServer/SkuRun"
 )
 
 type Message struct {
@@ -46,15 +47,20 @@ func ControlTsi(msgType string, msgContent string) {
 }
 
 func Connect() {
-	addr, err := net.ResolveTCPAddr("tcp", "172.16.15.214:3602")
+	server := <-SkuRun.PiServer
+	SkuRun.PiServer <- server
+
+	addr, err := net.ResolveTCPAddr("tcp", server.TsiServerAddress + ":3602")
 	if err != nil {
-		holmes.Errorln(err.Error())
+		holmes.Debugf("Tsi 服务器连接失败:%s\n" ,err.Error())
 		ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
+		return
 	}
 	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
-		holmes.Errorln(err.Error())
+		holmes.Debugf("Tsi 服务器连接失败:%s\n" ,err.Error())
 		ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.FAIL)
+		return
 	}
 
 	tsiConn := <-TsiClientChan
