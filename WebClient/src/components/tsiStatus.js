@@ -30,14 +30,16 @@ export var tsiStatus = {
 
     nowData : function(pm25) {
         if (this.isRunning) {
-            if (!this.isAlertCloseSmoke) {
-                this.isAlertCloseSmoke = true;
-                this.vue.$alert('pm25超过500，请灭烟！',{
-                    confirmButtonText: '确定'
-                });
-            }
-
             if (pm25 > this.TSI_START_POINT) {
+                if (pm25 > 530) {
+                    if (!this.isAlertCloseSmoke) {
+                        this.isAlertCloseSmoke = true;
+                        this.vue.$alert('pm25超过500，请灭烟！',{
+                            confirmButtonText: '确定'
+                        });
+                    }
+                }
+
                 //大于500  舍弃
             } else if (pm25 > this.TSI_STOP_POINT) {
                 //14 ~ 500 之间的数据 统计

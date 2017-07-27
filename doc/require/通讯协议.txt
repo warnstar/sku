@@ -1,0 +1,35 @@
+﻿client_info:
+		name : 'abc'
+		connect_now : 13
+		dac:
+
+上报设备 :
+		type : client_info
+		content :
+时间同步：
+		type : client_time_sync
+		content : 1413131313  int
+时间同步确认
+		type ：client_time_sync_ack
+		content : 1/0
+开始采集
+		type : client_collect_start
+
+		content : null
+开始采集确认
+		type : client_collect_start_ack
+		content : 1/0
+停止采集
+		type : client_collect_stop
+		content : null
+停止采集确认
+		type : client_collect_stop_ack
+		content : 1/0
+获取文件信息
+		type : client_get_file_info
+		content : int size
+
+获取文件
+		type : client_get_file
+		content : 文件名(data_TSI_test.txt，data_TSI.txt)
+

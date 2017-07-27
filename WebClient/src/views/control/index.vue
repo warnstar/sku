@@ -359,14 +359,17 @@
                     case message.WEB_TSI_NOW_DATA :
                         //检测当前pm25的值
                         tsiStatus.nowData(parseInt(data.content));
+                        if (parseInt(data.content) >= 1000){
+                            data.content = "1000"
+                        }
 
                         var myDate = new Date();
                         var hour = myDate.getHours();
                         var min = myDate.getMinutes();
                         var sec = myDate.getSeconds();
 
-                        if (sec%5 == 0) {
-                            if (min%5 == 0 && myDate.getSeconds() == 1) {
+                        if (sec%3 == 0) {
+                            if (myDate.getSeconds() == 1) {
                                 _this.tsi_data.labels.push(hour + ":" + min);
                             } else {
                                 _this.tsi_data.labels.push("")

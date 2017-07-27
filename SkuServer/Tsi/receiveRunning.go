@@ -31,7 +31,7 @@ func recvRunning(conn net.Conn) {
 			}
 
 			msg, err := reader.ReadString('\n')
-			println(msg)
+
 			if err != nil {
 				holmes.Errorf("TSI 数据接收 -- read数据错误：%s\n",err.Error())
 			}

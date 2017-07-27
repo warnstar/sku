@@ -1,0 +1,32 @@
+﻿
+		
+上报DAC :
+		type : client_dac
+		content : 
+		{
+			num : 8 int 
+			value: 125 int
+		}		
+		
+DAC接收完毕：
+		type : client_dac
+		content : NULL
+		
+写入kb完成开始测量： (发给上位机)
+		type : client_write_kb_finish
+		content: 0  int
+		
+
+分析结果：
+		type : client_result
+		content: 
+		{
+			num: 2 int
+			stage: 400-500 string
+			total: 80 int
+			error: 5 int
+			proportion: 7.3 float 
+		}	
+等待退出信号：
+		type : client_exit
+		content: 0  int		
