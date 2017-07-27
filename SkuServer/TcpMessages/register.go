@@ -1,7 +1,7 @@
 package TcpMessages
 
 import (
-	"github.com/leesper/tao"
+	"github.com/warnstar/tao"
 	"sku/SkuServer/TcpMessages/ClientInfo"
 	"sku/SkuServer/TcpMessages/ClientTimeSync"
 	"sku/SkuServer/TcpMessages/ClientTsiTestPreStart"

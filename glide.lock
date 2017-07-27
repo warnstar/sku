@@ -1,16 +1,18 @@
-hash: e8c378904a6211dbb697d7d7d5408539bf7d6d3e644b4339d1f0ed9f7ef1c68e
-updated: 2017-07-18T21:49:23.4380565+08:00
+hash: 5d3585529a000dbc5c4291cc6a1655475c8962d2ce0d2edfebd6e9f07fbf5a60
+updated: 2017-07-27T09:53:51.1817342+08:00
 imports:
 - name: github.com/astaxie/beego
-  version: cab8458c1c4a5a3b4bf5192922be620e6dede15b
+  version: d96289a81bf67728cff7a19b067aaecc65a62ec6
   subpackages:
   - config
 - name: github.com/leesper/holmes
   version: 094aa44caf1225f0209344f508a8aacdba48f4b9
-- name: github.com/leesper/tao
+- name: github.com/warnstar/holmes
+  version: 094aa44caf1225f0209344f508a8aacdba48f4b9
+- name: github.com/warnstar/tao
   version: c8f71af537afb4d4b1157db05add1b8722204240
 - name: golang.org/x/net
-  version: b3756b4b77d7b13260a0a2ec658753cf48922eac
+  version: f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f
   subpackages:
   - websocket
 testImports:

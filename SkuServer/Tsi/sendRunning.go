@@ -1,7 +1,7 @@
 package Tsi
 
 import (
-	"github.com/leesper/holmes"
+	"github.com/warnstar/holmes"
 	"net"
 	"time"
 )

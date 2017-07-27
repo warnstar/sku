@@ -1,8 +1,7 @@
 package: sku
 import:
-- package: github.com/leesper/tao
-  version: ^1.5.5
-- package: github.com/leesper/holmes
+- package: github.com/warnstar/tao
+- package: github.com/warnstar/holmes
 testImport:
 - package: github.com/smartystreets/goconvey
   version: ~1.6.2
