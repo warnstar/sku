@@ -16,8 +16,8 @@ export var message = {
     socket : null,
     
     option : {
-        host : "localhost",
-        tsi_host : "172.16.15.214",
+        host : "127.0.0.1",
+        tsi_host : "127.0.0.1",
         port : 9502,
         client_num : 8,
         client_module_num : 16

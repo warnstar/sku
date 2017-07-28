@@ -10,9 +10,8 @@
             </el-col>
 
             <el-col :span="15" class="row-bg" style="margin: 10px;border: thin;">
-                <!--<span><b>服务器：</b></span>-->
-
-                <!--<el-button @click="serverCtl">启动</el-button>-->
+                <span><b>服务器：</b></span>
+                <a href="Sku://ps"><el-button>启动</el-button></a>
             </el-col>
         </el-row>
 

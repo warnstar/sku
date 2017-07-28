@@ -8,7 +8,6 @@
 
 ## 操作说明
 ### 启动软件
-1. 修改服务器配置（config.ini)，中“webSocket.host”选项为本地ip地址
 1. 启动服务器（sku.exe）
 2. 启动客户端（单品检验.exe）
 

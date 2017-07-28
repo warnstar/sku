@@ -1,9 +1,10 @@
 package: sku
 import:
-- package: github.com/warnstar/tao
-- package: github.com/warnstar/holmes
-testImport:
-- package: github.com/smartystreets/goconvey
-  version: ~1.6.2
+- package: github.com/astaxie/beego
   subpackages:
-  - convey
+  - config
+- package: github.com/warnstar/holmes
+- package: github.com/warnstar/tao
+- package: golang.org/x/net
+  subpackages:
+  - websocket
