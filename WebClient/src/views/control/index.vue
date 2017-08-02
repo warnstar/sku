@@ -1,7 +1,7 @@
 <template>
     <div class="control_main">
 
-        <el-row type="flex" class="row-bg control_top" justify="center" style="margin-top: 75px;">
+        <el-row type="flex" class="row-bg control_top" justify="center" style="margin-top: 15px;">
             <el-col :span="5" class="row-bg" style="margin: 10px;border: thin;">
                 <span><b>客户端：</b></span>
 
@@ -10,12 +10,12 @@
             </el-col>
 
             <el-col :span="15" class="row-bg" style="margin: 10px;border: thin;">
-                <span><b>服务器：</b></span>
-                <a href="Sku://ps"><el-button>启动</el-button></a>
+                <!--<span><b>服务器：</b></span>-->
+                <!--<a href="Sku://ps"><el-button>启动</el-button></a>-->
             </el-col>
         </el-row>
 
-        <el-row type="flex" class="row-bg control_body" justify="center" style="margin-top: 75px;">
+        <el-row type="flex" class="row-bg control_body" justify="center">
             <el-col :span="18" class="row-bg">
                 <el-row>
                     <el-col :span="5" class="row-bg control_body_left">
@@ -42,6 +42,13 @@
 
                         <!-- 测试结果分析 -->
                         <div :hidden="test_result_body_hide">
+                            <el-row class="test_result_body">
+                                <el-col :span="2">PI</el-col>
+                                <div>
+                                    <el-col v-for="i in (1,16)" :span="1" style="width: 27.5px;align-content: center;">{{i}}</el-col>
+                                </div>
+                            </el-row>
+
                             <el-row class="test_result_body" v-for="pi in piLight" :key="pi.pid">
                                 <el-col :span="2">{{pi.pid}}</el-col>
 
@@ -58,7 +65,7 @@
                                                 <el-table-column width="100" property="stage" label="范围"></el-table-column>
                                                 <el-table-column width="100" property="total" label="总采集点"></el-table-column>
                                                 <el-table-column width="100" property="error" label="错误数"></el-table-column>
-                                                <el-table-column width="100" property="proportion" label="错误率"></el-table-column>
+                                                <el-table-column width="100" property="proportion" label="错误率(%)"></el-table-column>
                                             </el-table>
                                             <span slot="reference">
                                                 <span v-if="module.status == 'success'" style="color: #13CE66;" class="el-icon-star-on"></span>
@@ -324,16 +331,16 @@
                     case message.WEB_TSI_TEST_PRE :
                         _this.isLoading = false;
                         _this.active = ACTIVE_TSI_COLLECT_PRE;
-                        _this.$alert('TSI校验完成！待KB写入完成，即可进行测量。',{
+                        _this.$alert('TSI校验完成！等待KB写入完成。',{
+                            confirmButtonText: '确定'
+                        });
+                        break;
+                    case message.WEB_CAN_START_TSI_TEST :
+                        _this.$alert('全部终端KB已写入完成，可以开始TSI测量！', {
                             confirmButtonText: '确定'
                         });
 
-                        break;
-                    case message.WEB_CAN_START_TSI_TEST :
-                        _this.$alert('全部终端KB已写入完成，可以开始TSI测量！', '写入KB', {
-                            confirmButtonText: '确定'
-                        });
-                        console.log("可以开始tsi测试")
+                        console.log("可以开始tsi测试");
                         _this.unNext = false;
                         break;
                     case message.WEB_TSI_TEST :
