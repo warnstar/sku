@@ -8,6 +8,7 @@ import (
 	"sku/WebServer/WebKey"
 	"sku/WebServer/WebMessages/WebUser"
 	"sku/Channel/ChanTcp"
+	"time"
 )
 
 type Message struct {
@@ -50,6 +51,9 @@ func Register(ws *websocket.Conn) {
 			}
 
 			if tsiChan.IsRunning {
+				//等待1s
+				time.Sleep(time.Second)
+
 				//开启读取tsi数据
 				Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
 				Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
@@ -60,30 +64,49 @@ func Register(ws *websocket.Conn) {
 			tsiChan.Type = Tsi.TSI_RUN_TYPE_TEST_PRE
 			Tsi.TsiClientChan <- tsiChan
 
-			holmes.Infof("tsi校准启动:%v\n", tsiChan.IsRunning)
+			if !tsiChan.IsRunning {
+				Tsi.Connect()
+			}
 
-			//开启读取tsi数据
-			Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
-			Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
+			if tsiChan.IsRunning {
+				//等待1s
+				time.Sleep(time.Second)
+
+				holmes.Infof("tsi校准启动:%v\n", tsiChan.IsRunning)
+
+				//开启读取tsi数据
+				Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
+				Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
+			}
 		case WebKey.WEB_TSI_TEST:
 			//处理 tsi 校验
 			tsiChan := <-Tsi.TsiClientChan
 			tsiChan.Type = Tsi.TSI_RUN_TYPE_TEST
 			Tsi.TsiClientChan <- tsiChan
 
-			holmes.Infof("tsi测试启动:%v\n", tsiChan.IsRunning)
+			if !tsiChan.IsRunning {
+				Tsi.Connect()
+			}
 
-			//开启读取tsi数据
-			Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
-			Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
+			if tsiChan.IsRunning {
+				//等待1s
+				time.Sleep(time.Second)
+
+				holmes.Infof("tsi测试启动:%v\n", tsiChan.IsRunning)
+
+				//开启读取tsi数据
+				Tsi.ControlTsi(Tsi.TSI_SERVER_START, "")
+				Tsi.ControlTsi(Tsi.TSI_SERVER_RECEIVE_DATA_START, "")
+			}
 		case WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK:
 			ChanTcp.SendTcp(WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK, "")
 		case WebKey.WEB_CLIENT_EXIT:
-			//通知tcp服务器重启
-			ChanTcp.SendTcp(WebKey.WEB_CLIENT_EXIT, "")
 
-			//tsi客户端断开连接
+			//tsi客户端关闭
 			Tsi.ControlTsi(Tsi.TSI_SERVER_EXIT,"")
+
+			//通知tcp服务器关闭
+			ChanTcp.SendTcp(WebKey.WEB_CLIENT_EXIT, "")
 		}
 	}
 }

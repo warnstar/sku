@@ -26,7 +26,6 @@ func recvRunning(conn net.Conn) {
 			TsiClientChan <- tsiChan
 
 			if !tsiChan.IsStartedReceive {
-				holmes.Infoln("TSI 数据接收--结束线程")
 				break
 			}
 
@@ -34,6 +33,7 @@ func recvRunning(conn net.Conn) {
 
 			if err != nil {
 				holmes.Errorf("TSI 数据接收 -- read数据错误：%s\n",err.Error())
+				continue
 			}
 			res := strings.Split(msg, ",")
 
@@ -49,6 +49,8 @@ func recvRunning(conn net.Conn) {
 				analysisTsi(tsiNum)
 			}
 		}
+
+		holmes.Infoln("TSI 数据接收--结束线程")
 	}()
 }
 
@@ -72,11 +74,11 @@ func analysisTsi(pm25 int) {
 
 	if tsiChan.Type == TSI_RUN_TYPE_CHECK {
 		if pm25 > 0 {
-			if tsiChan.RecvNum >= 3 {
+			if tsiChan.RecvNum >= TSI_FLAG_TIMES {
 				ChanWeb.SendWeb(WebKey.WEB_TSI_CHECK, WebKey.SUCCESS)
 
-				// 关闭数据接收
-				ControlTsi(TSI_SERVER_STOP, "")
+				// 退出TSI程序
+				ControlTsi(TSI_SERVER_EXIT, "")
 			}
 		}
 	} else {
@@ -111,8 +113,8 @@ func analysisTsi(pm25 int) {
 			} else if pm25 > 0 {
 				// 0 < pm25 < 14
 				if tsiRunStatus.AtStopNum >= TSI_FLAG_TIMES {
-					// 停止采集TSI
-					ControlTsi(TSI_SERVER_STOP, "")
+					// tsi客户端关闭
+					ControlTsi(TSI_SERVER_EXIT, "")
 
 					// 通知 服务器，收集数据任务完成
 					if tsiChan.Type == TSI_RUN_TYPE_TEST_PRE {
