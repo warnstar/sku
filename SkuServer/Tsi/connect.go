@@ -65,6 +65,8 @@ func Connect() bool {
 		return false
 	}
 
+	holmes.Infoln("TSI 会话 连接成功")
+
 	tsiConn := <-TsiClientChan
 	tsiConn.Conn = conn
 	tsiConn.IsRunning = true

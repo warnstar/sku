@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+const CONTROL_SIGNAL_CLOSE = "control_signal_close"
+const CONTROL_SIGNAL_NULL  = "control_signal_null"
+
 func sendRunning(conn net.Conn) {
 	go func() {
 		isContinue := true
@@ -18,9 +21,14 @@ func sendRunning(conn net.Conn) {
 
 				go func(){
 					switch sendMsg.Type {
+					case CONTROL_SIGNAL_NULL:
+					case CONTROL_SIGNAL_CLOSE:
 					case TSI_SERVER_EXIT:
 						isReceiveDataContinue = false
 						isContinue = false
+
+						ControlTsi(CONTROL_SIGNAL_NULL,"")
+
 
 						_, err := conn.Write([]byte(TSI_STOP))
 						if err != nil {
@@ -105,10 +113,11 @@ func sendRunning(conn net.Conn) {
 				}()
 
 			} else {
-				holmes.Infoln("TSI 操作信号 - 结束线程")
 				break
 			}
 		}
+
+		holmes.Infoln("TSI 操作信号 - 结束线程")
 	}()
 
 }

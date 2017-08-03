@@ -102,11 +102,18 @@ func Register(ws *websocket.Conn) {
 			ChanTcp.SendTcp(WebKey.WEB_CLIENT_CONNECT_AND_TIME_SYNC_CHECK, "")
 		case WebKey.WEB_CLIENT_EXIT:
 
-			//tsi客户端关闭
-			Tsi.ControlTsi(Tsi.TSI_SERVER_EXIT,"")
+			tsiChan := <-Tsi.TsiClientChan
+			tsiChan.Type = Tsi.TSI_RUN_TYPE_TEST
+			Tsi.TsiClientChan <- tsiChan
+			if tsiChan.IsRunning {
+				//tsi客户端关闭
+				Tsi.ControlTsi(Tsi.TSI_SERVER_EXIT,"")
+			}
+
 
 			//通知tcp服务器关闭
 			ChanTcp.SendTcp(WebKey.WEB_CLIENT_EXIT, "")
+
 		}
 	}
 }

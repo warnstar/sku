@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+[HKEY_CLASSES_ROOT\Sku]
+@="单品测试"
+"URL Protocol"=""
+[HKEY_CLASSES_ROOT\Sku\DefaultIcon]
+@="C:\\data\\go\\src\\sku\\public\\单品测试\\server\sku.exe"
+[HKEY_CLASSES_ROOT\Sku\shell]
+[HKEY_CLASSES_ROOT\Sku\shell\open]
+[HKEY_CLASSES_ROOT\Sku\shell\open\command]
+@="\"C:\\data\\go\\src\\sku\\public\\单品测试\\server\sku.exe" \"%1\""
